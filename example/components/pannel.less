@@ -1,0 +1,12 @@
+.pannel {
+    @apply fixed top-0 right-0 border border-[#ccc] border-solid text-14px text-[#333] children:(py-10px m-0 cursor-pointer w-120px text-center);
+
+    p {
+        &:hover {
+            @apply bg-blue-200;
+        }
+        &:not(:nth-last-child(1)) {
+            border-bottom: 1px solid #ddd;
+        }
+    }
+}
