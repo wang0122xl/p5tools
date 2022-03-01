@@ -2,18 +2,20 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-02-28 17:27:24
+ * @LastEditTime: 2022-03-01 11:55:13
  * @Description: file content
  */
 
 import P5 from 'p5'
-import BaseTool, { BaseAnnotation } from './baseTool/BaseTool'
+import BaseTool, { P5BaseAnnotation } from './baseTool/BaseTool'
 import CircleTool from './CircleTool'
 import SquareTool from './SquareTool'
 import LineTool from './LineTool'
+import ArrowLineTool from './ArrowLineTool'
+
 import FreehandTool from './FreehandTool'
 import TextTool from './TextTool'
-import type { ToolOptions } from './baseTool/BaseTool'
+import type { P5ToolOptions } from './baseTool/BaseTool'
 
 type SKTouchStatus = 'start' | 'moving' | 'end'
 
@@ -22,7 +24,7 @@ class P5ToolsManager {
     /** mapping结构的tools，方便取值 */ 
     private _toolsMapping: Record<string, BaseTool<any>> = {}
 
-    public annotations: BaseAnnotation[] = []
+    public annotations: P5BaseAnnotation[] = []
     public touchStatus: SKTouchStatus = 'end'
     public hasEnabledToolCallback?: (has: boolean) => void
     
@@ -34,8 +36,9 @@ class P5ToolsManager {
     static LineTool = LineTool
     static FreehandTool = FreehandTool
     static TextTool = TextTool
+    static ArrowLineTool = ArrowLineTool
 
-    constructor (tools: BaseTool<any>[], annotations?: BaseAnnotation[]) {
+    constructor (tools: BaseTool<any>[], annotations?: P5BaseAnnotation[]) {
         this.tools = tools
         
         this._toolsMapping = tools.reduce((p, c) => {
@@ -64,9 +67,9 @@ class P5ToolsManager {
      * @param {BaseAnnotation} annotations
      * @return {*}
      */    
-    private initTools(tools: BaseTool<any>[], annotations?: BaseAnnotation[]) {
+    private initTools(tools: BaseTool<any>[], annotations?: P5BaseAnnotation[]) {
         const annotationsMapping: {
-            [name: string]: BaseAnnotation[]
+            [name: string]: P5BaseAnnotation[]
         } = {}
         // 两次循环将所有标注指定给对应的工具类里
         for (const anno of annotations || []) {
@@ -159,7 +162,7 @@ class P5ToolsManager {
      * @param {any} initialState
      * @return {*}
      */     
-    public setToolEnabled(name: string, options?: ToolOptions) {
+    public setToolEnabled(name: string, options?: P5ToolOptions) {
         const tool = this.findTool(name)
         if (!tool) {
             console.error('未设置tool：%s', name)

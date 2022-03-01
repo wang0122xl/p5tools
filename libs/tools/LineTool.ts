@@ -2,18 +2,18 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-02-28 20:13:26
+ * @LastEditTime: 2022-03-01 11:56:25
  * @Description: file content
  */
 
-import BaseTool, { BaseAnnotation } from './baseTool/BaseTool'
+import P5BaseTool, { P5BaseAnnotation } from './baseTool/BaseTool'
 import P5 from 'p5'
 
-interface LineToolAnnotation extends BaseAnnotation<'LineTool'> {
+interface LineToolAnnotation extends P5BaseAnnotation<'LineTool'> {
     
 }
 
-class LineTool extends BaseTool<LineToolAnnotation> {
+class LineTool extends P5BaseTool<LineToolAnnotation> {
     static toolName = 'LineTool'
     
     constructor (annotations?: LineToolAnnotation[]) {

@@ -2,21 +2,21 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-02-28 20:13:08
+ * @LastEditTime: 2022-03-01 11:56:12
  * @Description: file content
  */
 
-import BaseTool, { BaseAnnotation } from './baseTool/BaseTool'
+import P5BaseTool, { P5BaseAnnotation } from './baseTool/BaseTool'
 import P5 from 'p5'
 import { distanceBetween } from '../utils/index'
 import type { CursorPoint } from '../utils/index'
 import _ from 'lodash'
 
-interface FreehandToolAnnotation extends BaseAnnotation<'FreehandTool'> {
+interface FreehandToolAnnotation extends P5BaseAnnotation<'FreehandTool'> {
     freePaths: CursorPoint[]
 }
 
-class FreehandTool extends BaseTool<FreehandToolAnnotation> {
+class FreehandTool extends P5BaseTool<FreehandToolAnnotation> {
     static toolName = 'FreehandTool'
     
     constructor (annotations?: FreehandToolAnnotation[]) {

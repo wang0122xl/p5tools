@@ -2,18 +2,18 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-02-28 20:13:29
+ * @LastEditTime: 2022-03-01 11:56:39
  * @Description: file content
  */
 
-import BaseTool, { BaseAnnotation } from './baseTool/BaseTool'
+import P5BaseTool, { P5BaseAnnotation } from './baseTool/BaseTool'
 import P5 from 'p5'
 
-interface CircleToolAnnotation extends BaseAnnotation<'SquareTool'> {
+interface CircleToolAnnotation extends P5BaseAnnotation<'SquareTool'> {
 
 }
 
-class SquareTool extends BaseTool<CircleToolAnnotation> {
+class SquareTool extends P5BaseTool<CircleToolAnnotation> {
     static toolName = 'SquareTool'
     
     constructor (annotations?: CircleToolAnnotation[]) {

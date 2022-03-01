@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-01 09:15:49
+ * @LastEditTime: 2022-03-01 09:41:50
  * @Description: file content
  */
 import { useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
@@ -21,7 +21,8 @@ function App() {
             new P5ToolsManager.CircleTool(),
             new P5ToolsManager.SquareTool(),
             new P5ToolsManager.LineTool(),
-            new P5ToolsManager.FreehandTool()
+            new P5ToolsManager.FreehandTool(),
+            new P5ToolsManager.ArrowLineTool()
         ])
         return toolsManager
     })

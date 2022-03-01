@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-01 09:30:30
+ * @LastEditTime: 2022-03-01 11:54:41
  * @Description: 基础工具
  */
 
@@ -11,7 +11,7 @@ import P5, { THE_STYLE } from 'p5'
 import { distanceBetween } from '../../utils/index'
 import type { CursorPoint } from '../../utils/index'
 
-export interface ToolOptions {
+export interface P5ToolOptions {
     strokeWeight?: number
     strokeColor?: string
     strokeAlpha?: number
@@ -20,24 +20,24 @@ export interface ToolOptions {
     textStyle?: THE_STYLE
 }
 
-export interface BaseAnnotation<Name = string> {
+export interface P5BaseAnnotation<Name = string> {
     title?: string // 标题
     date?: moment.Moment // 更新日期
     remark?: string // 备注
     belong: Name // 所属工具
     startPoint?: CursorPoint
     endPoint?: CursorPoint
-    options?: ToolOptions // p5 绘图所需的选项
+    options: P5ToolOptions // p5 绘图所需的选项
 }
-class BaseTool<
-    AnnotationType extends BaseAnnotation
+class P5BaseTool<
+    AnnotationType extends P5BaseAnnotation
 > {
     static readonly toolName: string
 
     public annotations: AnnotationType[] = []
     public name: AnnotationType['belong']
     public editingAnnotation?: AnnotationType
-    public options?: ToolOptions
+    public options?: P5ToolOptions
 
     constructor (
         name: AnnotationType['belong'],
@@ -48,13 +48,22 @@ class BaseTool<
     }
 
     /**
+     * @description: 获取文字
+     * @param {*} Promise
+     * @return {*}
+     */    
+    public getText: () => Promise<string> = async () => {
+        const text = prompt('请输入')
+        return text || ''
+    }
+
+    /**
      * @description: 根据标注的option设置sk
      * @param {AnnotationType} anno
      * @return {*}
      */    
     public configAnnotation(sk: P5, anno: AnnotationType): void {
         const options = anno.options
-        console.log(options?.strokeWeight)
         if (options?.strokeColor) {
             const color = sk.color(options.strokeColor)
             const alpha = sk.map(options.strokeAlpha || 1, 0, 1, 0, 255)
@@ -74,15 +83,22 @@ class BaseTool<
         options?.textStyle && sk.textStyle(options.textStyle)
     }
 
+    public getInitialOptions(): P5ToolOptions {
+        return {
+            textSize: 12,
+            strokeColor: '#111',
+            strokeWeight: 1
+        }
+    }
     /**
-     * @description: 创建初始化的标注信息
+     * @description: 获取初始化的标注信息
      * @param 
      * @return BaseAnnotation
      */    
-    public getInitialAnnotation(): BaseAnnotation {
+    public getInitialAnnotation(): P5BaseAnnotation {
         return {
             belong: this.name,
-            options: this.options,
+            options: {...this.getInitialOptions(), ...this.options},
             date: moment()
         }
     }
@@ -163,4 +179,4 @@ class BaseTool<
     }
 }
 
-export default BaseTool
+export default P5BaseTool
