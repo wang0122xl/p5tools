@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-01 11:54:41
+ * @LastEditTime: 2022-03-01 23:29:29
  * @Description: 基础工具
  */
 
@@ -10,6 +10,8 @@ import moment from "moment"
 import P5, { THE_STYLE } from 'p5'
 import { distanceBetween } from '../../utils/index'
 import type { CursorPoint } from '../../utils/index'
+import P5BasePlugin from '../../plugins'
+import _ from 'lodash'
 
 export interface P5ToolOptions {
     strokeWeight?: number
@@ -28,6 +30,9 @@ export interface P5BaseAnnotation<Name = string> {
     startPoint?: CursorPoint
     endPoint?: CursorPoint
     options: P5ToolOptions // p5 绘图所需的选项
+    translateX: number
+    translateY: number
+    scale?: number
 }
 class P5BaseTool<
     AnnotationType extends P5BaseAnnotation
@@ -38,6 +43,10 @@ class P5BaseTool<
     public name: AnnotationType['belong']
     public editingAnnotation?: AnnotationType
     public options?: P5ToolOptions
+    public pluginsCount: number = 0
+
+    public pluginItemWH: number = 20
+    public pluginItemMargin: number = 5
 
     constructor (
         name: AnnotationType['belong'],
@@ -99,7 +108,9 @@ class P5BaseTool<
         return {
             belong: this.name,
             options: {...this.getInitialOptions(), ...this.options},
-            date: moment()
+            date: moment(),
+            translateX: 0,
+            translateY: 0
         }
     }
 
@@ -131,6 +142,15 @@ class P5BaseTool<
      */    
     public setup(sk: P5) {
 
+    }
+
+    /**
+     * @description: p5 mouseMoved
+     * @param {P5} sk
+     * @return {*}
+     */    
+     public mouseMoved(sk: P5) {
+         
     }
 
     /**
@@ -176,6 +196,34 @@ class P5BaseTool<
             this.annotations?.pop()
             this.editingAnnotation = undefined
         }
+    }
+
+    /**
+     * @description: 反转起始和终止点，使起始点永远在左上角
+     * @param {*}
+     * @return {*}
+     */    
+    public reverseStartEndPointByOrder() {
+        if (this.editingAnnotation) {
+            const [startX, startY] = this.editingAnnotation.startPoint!
+            const [endX, endY] = this.editingAnnotation.endPoint!
+            this.editingAnnotation.startPoint = [Math.min(startX, endX), Math.min(startY, endY)]
+            this.editingAnnotation.endPoint = [Math.max(startX, endX), Math.max(startY, endY)]
+        }
+    }
+
+    /**
+     * @description: 判断点坐标是否在annotation范围内
+     * @param {CursorPoint} point
+     * @param {P5BaseAnnotation} annotation
+     * @return {*}
+     */    
+    public pointInAnnotation(point: CursorPoint, annotation: P5BaseAnnotation): boolean {
+        return false
+    }
+
+    public getPluginOrigin(annotation: P5BaseAnnotation): CursorPoint {
+        return annotation.startPoint || [0, 0]
     }
 }
 

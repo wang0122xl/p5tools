@@ -2,28 +2,38 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-01 09:41:50
+ * @LastEditTime: 2022-03-01 22:24:32
  * @Description: file content
  */
 import { useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
 import './app.less'
 import P5 from 'p5'
-import P5ToolsManager from '../libs/tools/Manager'
+import P5ToolsManager from '../libs/manager'
 import Pannel from './components/pannel'
 
 function App() {
     const p5ref = useRef<HTMLDivElement>(null!)
     const [sk, setSk] = useState<P5>()
 
+    const textTool = new P5ToolsManager.TextTool()
+    const circleTool = new P5ToolsManager.CircleTool()
+    const squareTool = new P5ToolsManager.SquareTool()
+    const lineTool = new P5ToolsManager.LineTool()
+    const freehandTool = new P5ToolsManager.FreehandTool()
+    const arrowLineTool = new P5ToolsManager.ArrowLineTool()
+
     const [toolsManager] = useState<P5ToolsManager>(() => {
         const toolsManager = new P5ToolsManager([
-            new P5ToolsManager.TextTool(),
-            new P5ToolsManager.CircleTool(),
-            new P5ToolsManager.SquareTool(),
-            new P5ToolsManager.LineTool(),
-            new P5ToolsManager.FreehandTool(),
-            new P5ToolsManager.ArrowLineTool()
+            textTool,
+            circleTool,
+            squareTool,
+            lineTool,
+            freehandTool,
+            arrowLineTool
         ])
+        toolsManager
+            .usePlugin(new P5ToolsManager.MovePlugin(), [circleTool, squareTool])
+            .usePlugin(new P5ToolsManager.ScalePlugin(), [squareTool, circleTool])
         return toolsManager
     })
 
@@ -31,6 +41,9 @@ function App() {
         if (p5ref.current) {
             new P5((sk: P5) => {
                 setSk(sk)
+                sk.preload = () => {
+                    toolsManager.preload(sk)
+                }
                 sk.setup = () => {
                     const viewerSize = {
                         x: p5ref.current.clientWidth,

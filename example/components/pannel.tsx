@@ -2,13 +2,13 @@
  * @Date: 2022-02-28 18:40:59
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-01 09:41:21
+ * @LastEditTime: 2022-03-01 13:29:08
  * @Description: file content
  */
 import { MouseEvent } from 'react'
 import chooseOptions from './choose-options'
 import './pannel.less'
-import P5ToolsManager from '../../libs/tools/Manager'
+import P5ToolsManager from '../../libs/manager'
 
 const Pannel = (props: {
     manager: P5ToolsManager

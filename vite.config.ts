@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-02-28 16:34:38
+ * @LastEditTime: 2022-03-01 17:34:11
  * @Description: file content
  */
 import { defineConfig } from 'vite'
