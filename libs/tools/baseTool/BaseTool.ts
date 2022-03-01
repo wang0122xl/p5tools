@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-02-28 20:20:22
+ * @LastEditTime: 2022-03-01 09:30:30
  * @Description: 基础工具
  */
 
@@ -54,13 +54,15 @@ class BaseTool<
      */    
     public configAnnotation(sk: P5, anno: AnnotationType): void {
         const options = anno.options
-        console.log(options?.strokeColor)
+        console.log(options?.strokeWeight)
         if (options?.strokeColor) {
             const color = sk.color(options.strokeColor)
             const alpha = sk.map(options.strokeAlpha || 1, 0, 1, 0, 255)
 
             color.setAlpha(alpha)
             sk.stroke(color)
+        } else {
+            sk.noStroke()
         }
         if (options?.fillColor) {
             sk.fill(options.fillColor)
@@ -69,7 +71,7 @@ class BaseTool<
         }
         options?.textSize && sk.textSize(options.textSize)
         options?.strokeWeight && sk.strokeWeight(options.strokeWeight)
-        options?.textStyle && sk.textStyle('bold')
+        options?.textStyle && sk.textStyle(options.textStyle)
     }
 
     /**

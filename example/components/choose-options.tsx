@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 18:56:36
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-02-28 20:32:17
+ * @LastEditTime: 2022-03-01 09:20:29
  * @Description: file content
  */
 
@@ -13,37 +13,37 @@ import { CirclePicker } from 'react-color'
 import 'react-color'
 
 type Option = {
-    strokeWidth: number
-    strokeAlpha: number
-    strokeColor: string
+    width: number
+    alpha: number
+    color: string
 }
 const Options = (props: {
     rect: DOMRect
     onCancel: () => void
     onConfirm: (values: Option) => void
 }) => {
-    const [strokeWidth, setStrokeWidth] = useState('2')
-    const [strokeAlpha, setStrokeAlpha] = useState('1')
-    const [strokeColor, setStrokeColor] = useState<string>('#f44336')
+    const [width, setWidth] = useState('2')
+    const [alpha, setAlpha] = useState('1')
+    const [color, setColor] = useState<string>('#f44336')
     return (
         <div className="options" style={{
             top: props.rect.top,
             left: props.rect.left - 290
         }}>
              <p>画笔粗细：</p>
-             <input value={strokeWidth} onChange={e => setStrokeWidth(e.target.value)} />
+             <input value={width} onChange={e => setWidth(e.target.value)} />
              <p>透明度：</p>
-             <input value={strokeAlpha} onChange={e => setStrokeAlpha(e.target.value)} />
+             <input value={alpha} onChange={e => setAlpha(e.target.value)} />
              <div>
-             <CirclePicker color={strokeColor} onChange={c => setStrokeColor(c.hex)} />
+             <CirclePicker color={color} onChange={c => setColor(c.hex)} />
              </div>
 
              <div className="flex items-center mt-20px">
                  <button className="flex-1 mr-10px" onClick={() => {
                      props.onConfirm({
-                         strokeWidth: parseFloat(strokeWidth) || 2,
-                         strokeAlpha: parseFloat(strokeAlpha) || 1,
-                         strokeColor
+                         width: parseFloat(width) || 2,
+                         alpha: parseFloat(alpha) || 1,
+                         color
                      })
                  }}>确认</button>
                  <button className="flex-1" onClick={props.onCancel}>取消</button>

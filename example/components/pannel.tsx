@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 18:40:59
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-02-28 20:31:58
+ * @LastEditTime: 2022-03-01 09:27:43
  * @Description: file content
  */
 import { MouseEvent } from 'react'
@@ -15,12 +15,20 @@ const Pannel = (props: {
 }) => {
     const selectTool = async (e: MouseEvent, toolName: string) => {
         const option = await chooseOptions(e)
-        console.log(option)
-        props.manager.setToolEnabled(toolName, {
-            strokeColor: option.strokeColor,
-            strokeAlpha: option.strokeAlpha,
-            strokeWeight: option.strokeWidth
-        })
+        if (toolName === P5ToolsManager.TextTool.toolName) {
+            props.manager.setToolEnabled(toolName, {
+                fillColor: option.color,
+                strokeAlpha: option.alpha,
+                textSize: option.width
+            })
+        } else {
+            props.manager.setToolEnabled(toolName, {
+                strokeColor: option.color,
+                strokeAlpha: option.alpha,
+                strokeWeight: option.width
+            })
+        }
+        
     }
     return (
         <div className="pannel">
