@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-01 23:29:29
+ * @LastEditTime: 2022-03-02 22:12:11
  * @Description: 基础工具
  */
 
@@ -35,7 +35,8 @@ export interface P5BaseAnnotation<Name = string> {
     scale?: number
 }
 class P5BaseTool<
-    AnnotationType extends P5BaseAnnotation
+    AnnotationType extends P5BaseAnnotation,
+    ToolState extends Record<string, any> = any
 > {
     static readonly toolName: string
 
@@ -48,12 +49,16 @@ class P5BaseTool<
     public pluginItemWH: number = 20
     public pluginItemMargin: number = 5
 
+    public state: ToolState
+
     constructor (
         name: AnnotationType['belong'],
-        annotations?: AnnotationType[]
+        annotations?: AnnotationType[],
+        initialState?: ToolState
     ) {
         this.name = name
         annotations && (this.annotations = annotations)
+        this.state = (initialState || {}) as ToolState
     }
 
     /**
@@ -165,9 +170,10 @@ class P5BaseTool<
     /**
      * @description: p5 touchStarted
      * @param {P5} sk
+     * @param {any} event
      * @return {*}
      */    
-    public touchStarted(sk: P5) {
+    public touchStarted(sk: P5, event: any) {
         this.editingAnnotation = {
             ...this.getInitialAnnotation(),
             startPoint: [sk.mouseX, sk.mouseY]
@@ -204,9 +210,9 @@ class P5BaseTool<
      * @return {*}
      */    
     public reverseStartEndPointByOrder() {
-        if (this.editingAnnotation) {
-            const [startX, startY] = this.editingAnnotation.startPoint!
-            const [endX, endY] = this.editingAnnotation.endPoint!
+        if (this.editingAnnotation && this.editingAnnotation.startPoint && this.editingAnnotation.endPoint) {
+            const [startX, startY] = this.editingAnnotation.startPoint
+            const [endX, endY] = this.editingAnnotation.endPoint
             this.editingAnnotation.startPoint = [Math.min(startX, endX), Math.min(startY, endY)]
             this.editingAnnotation.endPoint = [Math.max(startX, endX), Math.max(startY, endY)]
         }
@@ -222,6 +228,11 @@ class P5BaseTool<
         return false
     }
 
+    /**
+     * @description: 获取annotation对应的插件视图起始位置
+     * @param {P5BaseAnnotation} annotation
+     * @return {*}
+     */    
     public getPluginOrigin(annotation: P5BaseAnnotation): CursorPoint {
         return annotation.startPoint || [0, 0]
     }

@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-01 23:32:34
+ * @LastEditTime: 2022-03-02 23:13:47
  * @Description: file content
  */
 
@@ -24,7 +24,7 @@ class CircleTool extends P5BaseTool<CircleToolAnnotation> {
     public getPluginOrigin(annotation: P5BaseAnnotation<string>): CursorPoint {
         if (annotation.startPoint && annotation.endPoint) {
             const distance = distanceBetween(annotation.startPoint, annotation.endPoint)
-            return [annotation.startPoint[0] + distance - this.pluginItemWH / 2 + annotation.translateX, annotation.startPoint[1] + distance - this.pluginItemWH / 2 + annotation.translateY]
+            return [annotation.startPoint[0] + distance + annotation.translateX + 5, annotation.startPoint[1] + annotation.translateY - this.pluginItemWH / 2]
         }
 
         return [0, 0]
@@ -40,7 +40,6 @@ class CircleTool extends P5BaseTool<CircleToolAnnotation> {
                 startY
             ]
         }
-        this.reverseStartEndPointByOrder()
     }
 
     public pointInAnnotation(point: CursorPoint, annotation: CircleToolAnnotation): boolean {
@@ -55,8 +54,8 @@ class CircleTool extends P5BaseTool<CircleToolAnnotation> {
             if (
                 point[0] > startPoint[0] &&
                 point[0] < origin[0] + (this.pluginItemMargin + this.pluginItemWH) * this.pluginsCount &&
-                point[1] > startPoint[1] + originDistance - this.pluginItemWH / 2 &&
-                point[1] < origin[1] + this.pluginItemWH
+                point[1] > startPoint[1] - this.pluginItemWH / 2 &&
+                point[1] < startPoint[1] + this.pluginItemWH / 2
             ) {
                 return true
             }

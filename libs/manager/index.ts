@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-01 22:23:58
+ * @LastEditTime: 2022-03-02 22:12:44
  * @Description: file content
  */
 
@@ -14,6 +14,7 @@ import LineTool from '../tools/lineTool'
 import ArrowLineTool from '../tools/arrowLineTool'
 import FreehandTool from '../tools/freehandTool'
 import TextTool from '../tools/textTool'
+import CropTool from '../tools/cropTool'
 
 import P5BasePlugin from '../plugins'
 import MovePlugin from '../plugins/move'
@@ -44,6 +45,7 @@ class P5ToolsManager {
     static FreehandTool = FreehandTool
     static TextTool = TextTool
     static ArrowLineTool = ArrowLineTool
+    static CropTool = CropTool
 
     static MovePlugin = MovePlugin
     static ScalePlugin = ScalePlugin
@@ -148,11 +150,12 @@ class P5ToolsManager {
     /**
      * @description: p5 touchStart
      * @param {P5} sk
+     * @param {any} event
      * @return {*}
      */    
-    public touchStarted(sk: P5) {
+    public touchStarted(sk: P5, event: any) {
         this.touchStatus = 'start'
-        this.enabledTool?.touchStarted(sk)
+        this.enabledTool?.touchStarted(sk, event)
         for (const plugin of this.plugins) {
             plugin.touchStarted(sk)
         }
@@ -189,7 +192,7 @@ class P5ToolsManager {
      * @param {string} name
      * @return {*}
      */    
-    private findTool(name: string) {
+    public findTool(name: string) {
         return this._toolsMapping[name]
     }
 
