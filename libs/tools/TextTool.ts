@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 18:36:52
+ * @LastEditTime: 2022-03-03 20:40:58
  * @Description: file content
  */
 
@@ -17,36 +17,30 @@ interface TextToolAnnotation extends P5ToolAnnotation<'TextTool'> {
 
 class TextTool extends P5BaseTool<TextToolAnnotation> {
     static toolName = 'TextTool'
-    private inputing: boolean = false
+
+    private async defaultGetToolInfo () {
+        const title = prompt('请输入') || ''
+        return {
+            title,
+            time: new Date().getTime()
+        }
+    }
     
     constructor (annotations?: TextToolAnnotation[]) {
         super('TextTool', annotations)
     }
 
-    public touchStarted(sk: P5): void {
-        if (this.inputing) {
-            return
-        }
-        this.editingAnnotation = {
-            ...this.getInitialAnnotation(),
-            belong: 'TextTool',
-            textWidth: 0,
-            textHeight: 0
-        }
-        this.annotations.push(this.editingAnnotation)
+    public validateAnnotation(annotation: TextToolAnnotation): boolean {
+        return true
     }
 
     public touchEnded(sk: P5): void {
-        if (this.inputing) {
-            return
+        super.touchEnded(sk)
+        if (this.editingAnnotation) {
+            this.editingAnnotation.startPoint = this.restorePoint([sk.mouseX, sk.mouseY])
         }
-        this.editingAnnotation!.startPoint = this.restorePoint([sk.mouseX, sk.mouseY])
-        this.inputing = true
-        this.getToolInfo().then(t => {
-            this.inputing = false
-            this.editingAnnotation!.info = t
-        }).catch(e => this.inputing = false)
     }
+
 
     public getPluginOrigin(annotation: TextToolAnnotation): CursorPoint {
         const startPoint = annotation.transformedStartPoint()

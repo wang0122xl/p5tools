@@ -2,12 +2,12 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 11:18:54
+ * @LastEditTime: 2022-03-03 20:01:09
  * @Description: file content
  */
 
 import P5 from 'p5'
-import P5BaseTool, { P5ToolAnnotation } from '../tools/baseTool'
+import P5BaseTool, { P5ToolAnnotation, P5ToolBaseInfo, P5ToolGetInfo } from '../tools/baseTool'
 import CircleTool from '../tools/circleTool'
 import SquareTool from '../tools/squareTool'
 import LineTool from '../tools/lineTool'
@@ -50,9 +50,12 @@ class P5ToolsManager {
     static MovePlugin = MovePlugin
     static ScalePlugin = ScalePlugin
 
-    constructor () {
+    private _getToolInfo?: P5ToolGetInfo
+
+    constructor (getToolInfo?: P5ToolGetInfo) {
         this.tools = []
         this._toolsMapping = {}
+        this._getToolInfo = getToolInfo
     }
 
     set enabledTool (tool: P5BaseTool<any> | undefined) {
@@ -78,6 +81,7 @@ class P5ToolsManager {
             return this
         }
         this._toolsMapping[tool.name] = tool
+        tool.getToolInfo = tool.getToolInfo || this._getToolInfo
         this.tools.push(tool)
 
         return this
@@ -189,7 +193,9 @@ class P5ToolsManager {
         this.touchStatus = 'moving'
         this.enabledTool?.touchMoved(sk)
         for (const plugin of this.plugins) {
-            plugin.touchMoved(sk)
+            if (plugin.active) {
+                plugin.touchMoved(sk)
+            }
         }
     }
 
@@ -202,7 +208,9 @@ class P5ToolsManager {
         this.touchStatus = 'end'
         this.enabledTool?.touchEnded(sk)
         for (const plugin of this.plugins) {
-            plugin.touchEnded(sk)
+            if (plugin.active) {
+                plugin.touchEnded(sk)
+            }
         }
     }
 
@@ -238,6 +246,21 @@ class P5ToolsManager {
      */    
     public quitTool() {
         this.enabledTool = undefined
+    }
+
+    /**
+     * @description: 获取所有标注
+     * @param {*}
+     * @return {*}
+     */    
+    public getAllAnnotations() {
+        let annotations: P5ToolAnnotation[] = []
+        for (const tool of this.tools) {
+            for (const anno of tool.annotations) {
+                annotations.push(anno)
+            }
+        }
+        return annotations
     }
     
 }

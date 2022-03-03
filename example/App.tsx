@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 17:54:55
+ * @LastEditTime: 2022-03-03 20:33:22
  * @Description: file content
  */
 import { useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
@@ -13,6 +13,9 @@ import Pannel from './components/pannel'
 import { CursorPoint } from '../libs/utils'
 import CropTool from '../libs/tools/cropTool'
 import { createPortal, render, unmountComponentAtNode } from 'react-dom'
+import P5BaseTool, { P5ToolGetInfo } from '../libs/tools/baseTool'
+import moment from 'moment'
+import editInfo from './components/edit-info'
 
 function App() {
     const p5ref = useRef<HTMLDivElement>(null!)
@@ -38,8 +41,16 @@ function App() {
         setCropLayerPosition([p.startX, p.startY])
     }
 
+    const getInfo: P5ToolGetInfo = async (tool: P5BaseTool<any>) => {
+        const info = await editInfo()
+        return {
+            ...info,
+            time: new Date().getTime()
+        }
+    }
+
     const [toolsManager] = useState<P5ToolsManager>(() => {
-        const toolsManager = new P5ToolsManager()
+        const toolsManager = new P5ToolsManager(getInfo)
         toolsManager
             .useTool(textTool)
             .useTool(circleTool)
@@ -99,9 +110,11 @@ function App() {
         if (sk && image) {
             sk.draw = draw
             sk.touchStarted = (event: any) => {
-                toolsManager.touchStarted(sk, event)
+                if (event.target.nodeName === 'CANVAS') {
+                    toolsManager.touchStarted(sk, event)
+                }
             }
-            sk.touchMoved = () => {
+            sk.touchMoved = (event: any) => {
                 toolsManager.touchMoved(sk)
             }
             sk.touchEnded = () => {
@@ -122,8 +135,10 @@ function App() {
 
 
             sk.mouseWheel = (event: any) => {
-                const temp = scale - event.deltaY / 100
-                setScale(Math.max(Math.min(temp, 5), 0.5))
+                if (event.target.nodeName === 'CANVAS') {
+                    const temp = scale - event.deltaY / 100
+                    setScale(Math.max(Math.min(temp, 5), 0.5))
+                }
             }
         }
     }, [sk, image, draw])

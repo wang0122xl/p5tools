@@ -2,7 +2,7 @@
  * @Date: 2022-03-01 13:16:30
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 14:09:17
+ * @LastEditTime: 2022-03-03 19:33:33
  * @Description: file content
  */
 import P5 from 'p5'
@@ -125,9 +125,6 @@ class P5BasePlugin {
      * @return {*}
      */    
     public touchMoved(sk: P5) {
-        if (!this.active) {
-            return
-        }
         this.touchEndPoint = [sk.mouseX, sk.mouseY]
         this.handleTouchMoved(sk)
     }

@@ -2,13 +2,14 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 18:37:22
+ * @LastEditTime: 2022-03-03 20:55:57
  * @Description: file content
  */
 
-import P5BaseTool, { P5ToolAnnotation, P5ToolBaseInfo } from './baseTool'
+import P5BaseTool, { P5ToolAnnotation, P5ToolBaseInfo, P5ToolGetInfo } from './baseTool'
 import P5 from 'p5'
 import { CursorPoint } from '../utils'
+import emitter, { EMITTER_ANNOTATION_CROPPED } from '../utils/emitter'
 
 type CursorPosition = 'top' | 'top-right' | 'top-left' | 'left' | 'right' | 'bottom' | 'bottom-left' | 'bottom-right' | 'in-rect' | 'out-rect'
 
@@ -27,10 +28,7 @@ const CursorStyleMapping: Record<CursorPosition, string> = {
 
 const offset = 6 // 误差
 interface CropToolAnnotation extends P5ToolAnnotation<'CropTool'> {
-    images: {
-        info: P5ToolBaseInfo,
-        url: string
-    }[]
+    
 }
 
 const getPointPosition = (point: CursorPoint, start?: CursorPoint, end?: CursorPoint): CursorPosition => {
@@ -93,6 +91,11 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
 
     private touchStartPoint: CursorPoint = [0, 0]
 
+    public images: {
+        info: P5ToolBaseInfo,
+        url: string
+    }[] = []
+
     private pg?: P5
 
     public startRect?: CropRectFunc
@@ -103,6 +106,8 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         this.annotations = []
     }
 
+    private initialGetInfo: P5ToolGetInfo = () => Promise.resolve({})
+
     public async doCrop (sk: P5, beforeCallback?: () => Promise<any>, endCallback?: () => Promise<any>) {     
         const anno = this.annotations[0]
         const [startX, startY] = anno.transformedStartPoint()!
@@ -111,11 +116,14 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         const cropCanvas = ((sk.get(startX + offset / 2, startY + offset / 2, endX - startX - offset, endY - startY - offset) as any).canvas) as HTMLCanvasElement
         cropCanvas.toBlob(blob => {
             if (blob) {
-                const url = URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.href = url
-                a.download = '1.png'
-                a.click()
+                const url = URL.createObjectURL(blob);
+                (this.getToolInfo || this.initialGetInfo)(this).then(info => {
+                    this?.images.push({
+                        info,
+                        url
+                    })
+                    emitter.emit(EMITTER_ANNOTATION_CROPPED)
+                })
             }
         })
 
@@ -142,7 +150,6 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
                 ...this.getInitialAnnotation(),
                 belong: 'CropTool',
                 startPoint: restoredPoint,
-                images: []
             }
             this.annotations = [this.editingAnnotation]
             this.startRect?.({

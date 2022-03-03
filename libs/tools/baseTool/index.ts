@@ -2,16 +2,15 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 18:35:23
+ * @LastEditTime: 2022-03-03 19:59:00
  * @Description: 基础工具
  */
 
-import moment from "moment"
 import P5, { THE_STYLE } from 'p5'
 import { distanceBetween } from '../../utils/index'
 import type { CursorPoint } from '../../utils/index'
-import P5BasePlugin from '../../plugins'
 import _ from 'lodash'
+import emitter, { EMITTER_ANNOTATION_INFO_UPDATED } from "../../utils/emitter"
 
 export interface P5ToolOptions {
     strokeWeight?: number
@@ -24,7 +23,7 @@ export interface P5ToolOptions {
 
 export interface P5ToolBaseInfo {
     title?: string // 标题
-    date: moment.Moment // 更新日期
+    time?: number // 更新时间的时间戳
     remark?: string // 备注
     others?: any
 }
@@ -40,6 +39,8 @@ export interface P5ToolAnnotation<Name = string> {
     transformedStartPoint: () => CursorPoint | undefined
     transformedEndPoint: () => CursorPoint | undefined
 }
+
+export type P5ToolGetInfo = (tool: P5BaseTool<any>) => Promise<P5ToolBaseInfo>
 
 class P5BaseTool<
     AnnotationType extends P5ToolAnnotation,
@@ -61,6 +62,13 @@ class P5BaseTool<
     public scale: number = 1
     public translateX: number = 0
     public translateY: number = 0
+
+    /**
+     * @description: 获取文字的回调函数
+     * @param {*} Promise
+     * @return {*}
+     */    
+     public getToolInfo?: P5ToolGetInfo
 
     constructor (
         name: AnnotationType['belong'],
@@ -101,19 +109,6 @@ class P5BaseTool<
     }
 
     /**
-     * @description: 获取文字
-     * @param {*} Promise
-     * @return {*}
-     */    
-    public getToolInfo: () => Promise<P5ToolBaseInfo> = async () => {
-        const title = prompt('请输入') || ''
-        return {
-            title,
-            date: moment()
-        }
-    }
-
-    /**
      * @description: 根据标注的option设置sk
      * @param {AnnotationType} anno
      * @return {*}
@@ -139,6 +134,11 @@ class P5BaseTool<
         options?.textStyle && sk.textStyle(options.textStyle)
     }
 
+    /**
+     * @description: 获取初始化的标注设置信息
+     * @param {*}
+     * @return {*}
+     */    
     public getInitialOptions(): P5ToolOptions {
         return {
             textSize: 12,
@@ -155,7 +155,7 @@ class P5BaseTool<
         const self = this
         return {
             info: {
-                date: moment(),
+                time: new Date().getTime(),
             },
             belong: this.name,
             options: {...this.getInitialOptions(), ...this.options},
@@ -265,6 +265,15 @@ class P5BaseTool<
         if (!this.validateAnnotation(this.editingAnnotation!)) {
             this.annotations?.pop()
             this.editingAnnotation = undefined
+        } else {
+            this.getToolInfo?.(this).then(info => {
+                if (this.editingAnnotation) {
+                    this.editingAnnotation.info = info
+                    emitter.emit(EMITTER_ANNOTATION_INFO_UPDATED)
+                }
+            }).catch(e => {
+                console.warn(e)
+            })
         }
     }
 

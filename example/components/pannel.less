@@ -1,5 +1,9 @@
+.common-pannel {
+    @apply fixed bg-white top-0 right-0 border border-[#ccc] border-solid text-14px text-[#333];
+}
+
 .pannel {
-    @apply fixed top-0 right-0 border border-[#ccc] border-solid text-14px text-[#333] children:(py-10px m-0 cursor-pointer w-120px text-center);
+    @apply children:(py-10px m-0 cursor-pointer w-120px text-center);
 
     p {
         &:hover {
@@ -7,6 +11,49 @@
         }
         &:not(:nth-last-child(1)) {
             border-bottom: 1px solid #ddd;
+        }
+    }
+}
+
+.annotations-layer {
+    @apply right-120px flex flex-col w-320px text-[#333] max-h-80vh overflow-y-auto;
+
+    div {
+        @apply py-10px flex mx-10px;
+        &.title {
+            @apply justify-center text-[#111] font-500 text-16px;
+        }
+
+        &.outer {
+            &:not(:last-child) {
+                border-bottom: 1px solid #eee;
+            }
+        }
+
+        span {
+            @apply truncate;
+        }
+    }
+
+}
+
+.images-layer {
+    @apply right-120px flex flex-col w-250px text-[#333] max-h-80vh overflow-auto;
+
+    div {
+        @apply py-10px flex mx-10px;
+        &.title {
+            @apply justify-center text-[#111] font-500 text-16px;
+        }
+
+        &.outer {
+            &:not(:last-child) {
+                border-bottom: 1px solid #eee;
+            }
+        }
+
+        span {
+            @apply truncate;
         }
     }
 }
