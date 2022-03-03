@@ -2,14 +2,14 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-02 13:10:15
+ * @LastEditTime: 2022-03-03 18:23:15
  * @Description: file content
  */
 
-import P5BaseTool, { P5BaseAnnotation } from './baseTool'
+import P5BaseTool, { P5ToolAnnotation } from './baseTool'
 import P5 from 'p5'
 
-interface LineToolAnnotation extends P5BaseAnnotation<'LineTool'> {
+interface LineToolAnnotation extends P5ToolAnnotation<'LineTool'> {
     
 }
 
@@ -22,8 +22,8 @@ class LineTool extends P5BaseTool<LineToolAnnotation> {
 
     public draw(sk: P5): void {
         for (const annotation of this.annotations || []) {
-            const startPoint = annotation.startPoint
-            const endPoint = annotation.endPoint
+            const startPoint = annotation.transformedStartPoint()
+            const endPoint = annotation.transformedEndPoint()
 
             if (!startPoint || !endPoint) {
                 return

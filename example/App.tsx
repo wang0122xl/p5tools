@@ -2,10 +2,10 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-02 22:52:42
+ * @LastEditTime: 2022-03-03 17:54:55
  * @Description: file content
  */
-import { useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
 import './app.less'
 import P5 from 'p5'
 import P5ToolsManager from '../libs/manager'
@@ -19,6 +19,7 @@ function App() {
     const [image, setImage] = useState<P5.Image>()
     const [sk, setSk] = useState<P5>()
     const [wrapper, setWrapper] = useState<P5.Element>()
+    const [scale, setScale] = useState(1)
 
     const [cropLayerPosition, setCropLayerPosition] = useState<CursorPoint>()
 
@@ -38,17 +39,17 @@ function App() {
     }
 
     const [toolsManager] = useState<P5ToolsManager>(() => {
-        const toolsManager = new P5ToolsManager([
-            textTool,
-            circleTool,
-            squareTool,
-            lineTool,
-            freehandTool,
-            arrowLineTool,
-            cropTool
-        ])
+        const toolsManager = new P5ToolsManager()
         toolsManager
-            .usePlugin(new P5ToolsManager.MovePlugin(), [circleTool, squareTool])
+            .useTool(textTool)
+            .useTool(circleTool)
+            .useTool(squareTool)
+            .useTool(lineTool)
+            .useTool(freehandTool)
+            .useTool(arrowLineTool)
+            .useTool(cropTool)
+        toolsManager
+            .usePlugin(new P5ToolsManager.MovePlugin(), [circleTool, squareTool, textTool])
             .usePlugin(new P5ToolsManager.ScalePlugin(), [squareTool, circleTool])
         return toolsManager
     })
@@ -84,13 +85,19 @@ function App() {
         }
     }, [cropLayerPosition, wrapper])
 
+    const draw = useCallback(() => {
+        if (!sk || !image) {
+            return
+        }
+        (sk as any).clear();
+        sk.resizeCanvas(image.width * scale, image.height * scale, false)
+        sk.image(image, 0, 0, image.width * scale, image.height * scale)
+        toolsManager.draw(sk!, scale)
+    }, [scale, sk, image])
+
     useEffect(() => {
         if (sk && image) {
-            sk.draw = () => {
-                (sk as any).clear();
-                sk.image(image, 0, 0, image.width, image.height)
-                toolsManager.draw(sk!)
-            }
+            sk.draw = draw
             sk.touchStarted = (event: any) => {
                 toolsManager.touchStarted(sk, event)
             }
@@ -103,8 +110,23 @@ function App() {
                     toolsManager.quitTool()
                 }
             }
+
+            sk.setup = () => {
+                const viewerSize = {
+                    x: 0,
+                    y: 0
+                }
+                sk.createCanvas(viewerSize.x, viewerSize.y)
+                toolsManager.setup(sk)
+            }
+
+
+            sk.mouseWheel = (event: any) => {
+                const temp = scale - event.deltaY / 100
+                setScale(Math.max(Math.min(temp, 5), 0.5))
+            }
         }
-    }, [sk, image])
+    }, [sk, image, draw])
 
     useEffect(() => {
         if (p5ref.current) {
@@ -116,16 +138,6 @@ function App() {
                         setImage(t)
                     })
                     toolsManager.preload(sk)
-                }
-
-                sk.setup = () => {
-                    const viewerSize = {
-                        x: p5ref.current.clientWidth,
-                        y: p5ref.current.clientHeight
-                    }
-                    console.log(viewerSize)
-                    sk.createCanvas(viewerSize.x, viewerSize.y)
-                    toolsManager.setup(sk)
                 }
 
             }, p5ref.current)

@@ -2,11 +2,11 @@
  * @Date: 2022-03-01 13:16:30
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-01 23:14:43
+ * @LastEditTime: 2022-03-03 14:09:17
  * @Description: file content
  */
 import P5 from 'p5'
-import P5BaseTool, { P5BaseAnnotation } from '../tools/baseTool'
+import P5BaseTool, { P5ToolAnnotation } from '../tools/baseTool'
 import { CursorPoint } from '../utils'
 import eventBus, { EMITTER_PLUGIN_ACTIVED } from '../utils/emitter'
 
@@ -14,7 +14,7 @@ class P5BasePlugin {
     static readonly pluginName: string
 
     public name: string = ''
-    public tools: P5BaseTool<P5BaseAnnotation>[] = []
+    public tools: P5BaseTool<P5ToolAnnotation>[] = []
     public enabled: boolean = false
     public active: boolean = false
     private iconUrl: string
@@ -28,8 +28,12 @@ class P5BasePlugin {
     public touchStartPoint?: CursorPoint
     public touchEndPoint: CursorPoint = [0, 0]
 
-    public editingAnnotation?: P5BaseAnnotation
+    public editingAnnotation?: P5ToolAnnotation
     public pluginLayerOrigin?: CursorPoint
+
+    public scale: number = 1
+    public translateX: number = 0
+    public translateY: number = 0
 
     constructor(imageUrl: string) {
         this.iconUrl = imageUrl

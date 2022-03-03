@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-02 22:12:11
+ * @LastEditTime: 2022-03-03 18:35:23
  * @Description: 基础工具
  */
 
@@ -22,20 +22,27 @@ export interface P5ToolOptions {
     textStyle?: THE_STYLE
 }
 
-export interface P5BaseAnnotation<Name = string> {
+export interface P5ToolBaseInfo {
     title?: string // 标题
-    date?: moment.Moment // 更新日期
+    date: moment.Moment // 更新日期
     remark?: string // 备注
+    others?: any
+}
+export interface P5ToolAnnotation<Name = string> {
+    info: P5ToolBaseInfo
     belong: Name // 所属工具
     startPoint?: CursorPoint
     endPoint?: CursorPoint
     options: P5ToolOptions // p5 绘图所需的选项
     translateX: number
     translateY: number
-    scale?: number
+    scale: number
+    transformedStartPoint: () => CursorPoint | undefined
+    transformedEndPoint: () => CursorPoint | undefined
 }
+
 class P5BaseTool<
-    AnnotationType extends P5BaseAnnotation,
+    AnnotationType extends P5ToolAnnotation,
     ToolState extends Record<string, any> = any
 > {
     static readonly toolName: string
@@ -51,6 +58,10 @@ class P5BaseTool<
 
     public state: ToolState
 
+    public scale: number = 1
+    public translateX: number = 0
+    public translateY: number = 0
+
     constructor (
         name: AnnotationType['belong'],
         annotations?: AnnotationType[],
@@ -61,14 +72,45 @@ class P5BaseTool<
         this.state = (initialState || {}) as ToolState
     }
 
+    public transformValue = (v: number, translate?: number) => {
+        return v * this.scale + (translate || 0)
+    }
+
+    /**
+     * @description: 获取原始坐标转换后的新坐标位置，scale, translate, etc..
+     * @param {CursorPoint} point
+     * @return {*}
+     */    
+    public transformPoint = (point: CursorPoint) => {
+        return [
+            this.transformValue(point[0] + this.translateX),
+            this.transformValue(point[1] + this.translateY)
+        ] as CursorPoint
+    }
+
+    /**
+     * @description: 获取画布坐标再未转换前的原始位置
+     * @param {CursorPoint} point
+     * @return {*}
+     */    
+    public restorePoint = (point: CursorPoint) => {
+        return [
+            point[0] / this.scale - this.translateX,
+            point[1] / this.scale - this.translateY
+        ] as CursorPoint
+    }
+
     /**
      * @description: 获取文字
      * @param {*} Promise
      * @return {*}
      */    
-    public getText: () => Promise<string> = async () => {
-        const text = prompt('请输入')
-        return text || ''
+    public getToolInfo: () => Promise<P5ToolBaseInfo> = async () => {
+        const title = prompt('请输入') || ''
+        return {
+            title,
+            date: moment()
+        }
     }
 
     /**
@@ -92,8 +134,8 @@ class P5BaseTool<
         } else {
             sk.noFill()
         }
-        options?.textSize && sk.textSize(options.textSize)
-        options?.strokeWeight && sk.strokeWeight(options.strokeWeight)
+        options?.textSize && sk.textSize(options.textSize * this.scale)
+        options?.strokeWeight && sk.strokeWeight(options.strokeWeight * this.scale)
         options?.textStyle && sk.textStyle(options.textStyle)
     }
 
@@ -101,7 +143,7 @@ class P5BaseTool<
         return {
             textSize: 12,
             strokeColor: '#111',
-            strokeWeight: 1
+            strokeWeight: 1,
         }
     }
     /**
@@ -109,13 +151,35 @@ class P5BaseTool<
      * @param 
      * @return BaseAnnotation
      */    
-    public getInitialAnnotation(): P5BaseAnnotation {
+    public getInitialAnnotation(): P5ToolAnnotation {
+        const self = this
         return {
+            info: {
+                date: moment(),
+            },
             belong: this.name,
             options: {...this.getInitialOptions(), ...this.options},
-            date: moment(),
             translateX: 0,
-            translateY: 0
+            translateY: 0,
+            scale: 1,
+            transformedStartPoint: function () {
+                if (!this.startPoint) {
+                    return undefined
+                }
+                return [
+                    self.transformValue(this.startPoint[0] + this.translateX),
+                    self.transformValue(this.startPoint[1] + this.translateY)
+                ] as CursorPoint
+            },
+            transformedEndPoint: function () {
+                if (!this.endPoint) {
+                    return undefined
+                }
+                return [
+                    self.transformValue(this.endPoint[0] + this.translateX),
+                    self.transformValue(this.endPoint[1] + this.translateY)
+                ] as CursorPoint
+            }
         }
     }
 
@@ -176,7 +240,7 @@ class P5BaseTool<
     public touchStarted(sk: P5, event: any) {
         this.editingAnnotation = {
             ...this.getInitialAnnotation(),
-            startPoint: [sk.mouseX, sk.mouseY]
+            startPoint: this.restorePoint([sk.mouseX, sk.mouseY])
         } as AnnotationType
         this.annotations.push(this.editingAnnotation)
     }
@@ -187,7 +251,7 @@ class P5BaseTool<
      * @return {*}
      */    
     public touchMoved(sk: P5) {
-        this.editingAnnotation!.endPoint = [sk.mouseX, sk.mouseY]
+        this.editingAnnotation!.endPoint = this.restorePoint([sk.mouseX, sk.mouseY])
     }
 
     /**
@@ -196,7 +260,7 @@ class P5BaseTool<
      * @return {*}
      */    
     public touchEnded(sk: P5) {
-        this.editingAnnotation!.endPoint = [sk.mouseX, sk.mouseY]
+        this.editingAnnotation!.endPoint = this.restorePoint([sk.mouseX, sk.mouseY])
         // 当前编辑的annotation非法，删除此annotation
         if (!this.validateAnnotation(this.editingAnnotation!)) {
             this.annotations?.pop()
@@ -221,20 +285,33 @@ class P5BaseTool<
     /**
      * @description: 判断点坐标是否在annotation范围内
      * @param {CursorPoint} point
-     * @param {P5BaseAnnotation} annotation
+     * @param {P5ToolAnnotation} annotation
      * @return {*}
      */    
-    public pointInAnnotation(point: CursorPoint, annotation: P5BaseAnnotation): boolean {
+    public pointInAnnotation(point: CursorPoint, annotation: P5ToolAnnotation): boolean {
         return false
     }
 
     /**
      * @description: 获取annotation对应的插件视图起始位置
-     * @param {P5BaseAnnotation} annotation
+     * @param {P5ToolAnnotation} annotation
      * @return {*}
      */    
-    public getPluginOrigin(annotation: P5BaseAnnotation): CursorPoint {
+    public getPluginOrigin(annotation: P5ToolAnnotation): CursorPoint {
         return annotation.startPoint || [0, 0]
+    }
+
+    public pointInPluginLayer(point: CursorPoint, annotation: P5ToolAnnotation<any>) {
+        const origin = this.getPluginOrigin(annotation)
+        if (
+            point[0] > origin[0] &&
+            point[0] < origin[0] + (this.pluginItemWH + this.pluginItemMargin) * this.pluginsCount &&
+            point[1] > origin[1] &&
+            point[1] < origin[1] + this.pluginItemWH
+        ) {
+            return true
+        }
+        return false
     }
 }
 

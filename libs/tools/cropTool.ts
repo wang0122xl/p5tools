@@ -2,11 +2,11 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-02 22:38:36
+ * @LastEditTime: 2022-03-03 18:37:22
  * @Description: file content
  */
 
-import P5BaseTool, { P5BaseAnnotation } from './baseTool'
+import P5BaseTool, { P5ToolAnnotation, P5ToolBaseInfo } from './baseTool'
 import P5 from 'p5'
 import { CursorPoint } from '../utils'
 
@@ -26,8 +26,11 @@ const CursorStyleMapping: Record<CursorPosition, string> = {
 }
 
 const offset = 6 // 误差
-interface CropToolAnnotation extends P5BaseAnnotation<'CropTool'> {
-
+interface CropToolAnnotation extends P5ToolAnnotation<'CropTool'> {
+    images: {
+        info: P5ToolBaseInfo,
+        url: string
+    }[]
 }
 
 const getPointPosition = (point: CursorPoint, start?: CursorPoint, end?: CursorPoint): CursorPosition => {
@@ -102,8 +105,8 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
 
     public async doCrop (sk: P5, beforeCallback?: () => Promise<any>, endCallback?: () => Promise<any>) {     
         const anno = this.annotations[0]
-        const [startX, startY] = anno.startPoint!
-        const [endX, endY] = anno.endPoint!
+        const [startX, startY] = anno.transformedStartPoint()!
+        const [endX, endY] = anno.transformedEndPoint()!
 
         const cropCanvas = ((sk.get(startX + offset / 2, startY + offset / 2, endX - startX - offset, endY - startY - offset) as any).canvas) as HTMLCanvasElement
         cropCanvas.toBlob(blob => {
@@ -128,17 +131,23 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         if (event.target.nodeName !== 'CANVAS') {
             return
         }
-        this.cursorPosition = getPointPosition([sk.mouseX, sk.mouseY], this.editingAnnotation?.startPoint, this.editingAnnotation?.endPoint)
+
+        const startPoint = this.editingAnnotation?.startPoint
+        const endPoint = this.editingAnnotation?.endPoint
+        const restoredPoint = this.restorePoint([sk.mouseX, sk.mouseY])
+        this.cursorPosition = getPointPosition(restoredPoint, startPoint, endPoint)
+
         if (this.cursorPosition === 'out-rect') {
             this.editingAnnotation = {
                 ...this.getInitialAnnotation(),
                 belong: 'CropTool',
-                startPoint: [sk.mouseX, sk.mouseY]
+                startPoint: restoredPoint,
+                images: []
             }
             this.annotations = [this.editingAnnotation]
             this.startRect?.({
-                startX: sk.mouseX,
-                startY: sk.mouseY
+                startX: restoredPoint[0],
+                startY: restoredPoint[1]
             })
         }
 
@@ -147,17 +156,21 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
 
     public touchMoved(sk: P5): void {
         const anno = this.editingAnnotation!
+        const restoredPoint = this.restorePoint([sk.mouseX, sk.mouseY])
 
         if (this.cursorPosition === 'out-rect') {
-            anno.endPoint = [sk.mouseX, sk.mouseY]
-            this.editingAnnotation!.endPoint = [sk.mouseX, sk.mouseY]
+            anno.endPoint = restoredPoint
         }
-        let startX: number = anno.startPoint![0]
-        let startY: number = anno.startPoint![1]
-        let endX: number = anno.endPoint![0]
-        let endY: number = anno.endPoint![1]
-        const transformX = sk.mouseX - this.touchStartPoint[0]
-        const transformY = sk.mouseY - this.touchStartPoint[1]
+
+        const startPoint = anno.startPoint
+        const endPoint = anno.endPoint
+
+        let startX: number = startPoint![0]
+        let startY: number = startPoint![1]
+        let endX: number = endPoint![0]
+        let endY: number = endPoint![1]
+        const transformX = (sk.mouseX - this.touchStartPoint[0]) / this.scale
+        const transformY = (sk.mouseY - this.touchStartPoint[1]) / this.scale
 
         switch (this.cursorPosition) {
             case 'in-rect':
@@ -198,16 +211,26 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
                 break;
         }
 
+
         anno.startPoint = [startX, startY]
         anno.endPoint = [endX, endY]
 
         this.touchStartPoint = [sk.mouseX, sk.mouseY]
+        
+        this.doEndRect()
+    }
 
+    private doEndRect () {
+        if (!this.editingAnnotation?.startPoint || !this.editingAnnotation.endPoint) {
+            return
+        }
+        const startPoint = this.editingAnnotation.transformedStartPoint()
+        const endPoint = this.editingAnnotation.transformedEndPoint()
         this.endRect?.({
-            startX: Math.min(this.editingAnnotation!.startPoint![0], this.editingAnnotation!.endPoint![0]),
-            startY: Math.min(this.editingAnnotation!.startPoint![1], this.editingAnnotation!.endPoint![1]),
-            endX: Math.max(this.editingAnnotation!.startPoint![0], this.editingAnnotation!.endPoint![0]),
-            endY: Math.max(this.editingAnnotation!.startPoint![1], this.editingAnnotation!.endPoint![1])
+            startX: Math.min(startPoint![0], endPoint![0]),
+            startY: Math.min(startPoint![1], endPoint![1]),
+            endX: Math.max(startPoint![0], endPoint![0]),
+            endY: Math.max(startPoint![1], endPoint![1])
         })
     }
 
@@ -241,15 +264,21 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         if (!this.pg) {
             this.pg = sk.createGraphics(sk.width, sk.height)
         }
-        (this.pg as any)?.clear()
+
+        if (sk.width !== this.pg.width || sk.height !== this.pg.height) {
+            this.pg.resizeCanvas(sk.width, sk.height);
+            this.doEndRect()
+        } else {
+            (this.pg as any)?.clear();
+        }
         this.pg.background(0, 0, 0, 120)
 
         if (!this.editingAnnotation) {
             return
         }
         const annotation = this.editingAnnotation!
-        const startPoint = annotation.startPoint
-        const endPoint = annotation.endPoint
+        const startPoint = annotation.transformedStartPoint()
+        const endPoint = annotation.transformedEndPoint()
         if (!startPoint || !endPoint) {
             return
         }
@@ -258,7 +287,7 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         const endX = Math.max(startPoint[0], endPoint[0])
         const endY = Math.max(startPoint[1], endPoint[1])
 
-        const position = getPointPosition([sk.mouseX, sk.mouseY], startPoint, endPoint)
+        const position = getPointPosition(this.restorePoint([sk.mouseX, sk.mouseY]), annotation.startPoint, annotation.endPoint)
         if (position === 'out-rect') {
             sk.cursor(sk.CROSS)
         } else {
@@ -270,14 +299,14 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         this.pg?.strokeWeight(1)
         this.pg.fill(255, 255, 255, 255)
         this.pg?.quad(
-            startX + annotation.translateX,
-            startY + annotation.translateY,
-            endX + annotation.translateX,
-            startY + annotation.translateY,
-            endX + annotation.translateX,
-            endY + annotation.translateY,
-            startX + annotation.translateX,
-            endY + annotation.translateY
+            startX,
+            startY,
+            endX,
+            startY,
+            endX,
+            endY,
+            startX,
+            endY
         )
         this.drawCropArea(startX, startY, endX, endY)
 

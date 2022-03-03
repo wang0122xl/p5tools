@@ -2,12 +2,12 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-02 22:12:44
+ * @LastEditTime: 2022-03-03 11:18:54
  * @Description: file content
  */
 
 import P5 from 'p5'
-import P5BaseTool, { P5BaseAnnotation } from '../tools/baseTool'
+import P5BaseTool, { P5ToolAnnotation } from '../tools/baseTool'
 import CircleTool from '../tools/circleTool'
 import SquareTool from '../tools/squareTool'
 import LineTool from '../tools/lineTool'
@@ -23,6 +23,7 @@ import ScalePlugin from '../plugins/scale'
 
 import type { P5ToolOptions } from '../tools/baseTool'
 import _ from 'lodash'
+import { CursorPoint } from '../utils'
 
 type SKTouchStatus = 'start' | 'moving' | 'end'
 
@@ -32,7 +33,6 @@ class P5ToolsManager {
     /** mapping结构的tools，方便取值 */ 
     private _toolsMapping: Record<string, P5BaseTool<any>> = {}
 
-    public annotations: P5BaseAnnotation[] = []
     public touchStatus: SKTouchStatus = 'end'
     public hasEnabledToolCallback?: (has: boolean) => void
     
@@ -50,19 +50,9 @@ class P5ToolsManager {
     static MovePlugin = MovePlugin
     static ScalePlugin = ScalePlugin
 
-    constructor (tools: P5BaseTool<any>[], annotations?: P5BaseAnnotation[]) {
-        this.tools = tools
-        
-        this._toolsMapping = tools.reduce((p, c) => {
-            p[c.name] = c
-            return p
-        }, {} as Record<string, P5BaseTool<any>>)
-        
-        if (annotations) {
-            this.annotations = annotations
-        }
-
-        this.initTools(tools, annotations)
+    constructor () {
+        this.tools = []
+        this._toolsMapping = {}
     }
 
     set enabledTool (tool: P5BaseTool<any> | undefined) {
@@ -77,26 +67,46 @@ class P5ToolsManager {
     }
 
     /**
-     * @description: 初始化所有工具的标注信息
-     * @param {P5BaseTool} tools
-     * @param {BaseAnnotation} annotations
+     * @description: 添加tool
+     * @param {P5BaseTool} tool
      * @return {*}
      */    
-    private initTools(tools: P5BaseTool<any>[], annotations?: P5BaseAnnotation[]) {
-        const annotationsMapping: {
-            [name: string]: P5BaseAnnotation[]
-        } = {}
-        // 两次循环将所有标注指定给对应的工具类里
-        for (const anno of annotations || []) {
-            if (!(anno.belong in annotationsMapping)) {
-                annotationsMapping[anno.belong] = []
-            }
-            annotationsMapping[anno.belong].push(anno)
+    public useTool(tool: P5BaseTool<any>) {
+        const included = !!this.findTool(tool.name)
+        if (included) {
+            console.error('tool: %s已存在, 请勿重复添加')
+            return this
         }
+        this._toolsMapping[tool.name] = tool
+        this.tools.push(tool)
 
-        for (const tool of tools) {
-            tool.annotations = annotationsMapping[tool.name] || []
+        return this
+    }
+
+    /**
+     * @description: 添加plugin
+     * @param {P5BasePlugin} plugin
+     * @param {P5BaseTool} controlTools
+     * @return {*}
+     */    
+     public usePlugin(plugin: P5BasePlugin, controlTools: P5BaseTool<any>[]) {
+        const plug = _.find(this.plugins, ['name', plugin.name])
+        if (plug) {
+            console.error('%s已存在, 请勿重复添加', plugin.name)
+        } else {
+            plugin.tools = controlTools
+            this.plugins.push(plugin)
         }
+        for (let i = 0; i < this.plugins.length; i ++) {
+            const plugin = this.plugins[i]
+            plugin.totalPluginsCount = this.plugins.length
+            plugin.pluginIndex = i
+        }
+        for (const tool of this.tools) {
+            tool.pluginsCount = this.plugins.length
+        }
+        
+        return this
     }
 
     /**
@@ -127,13 +137,22 @@ class P5ToolsManager {
     /**
      * @description: p5 draw
      * @param {P5} sk
+     * @param {number} scale 坐标转换的scale值
+     * @param {number} translateX
+     * @param {number} translateY
      * @return {*}
      */    
-    public draw(sk: P5) {
+    public draw(sk: P5, scale?: number, translateX?: number, translateY?: number) {
         for (const tool of this.tools) {
+            tool.scale = scale || 1
+            tool.translateX = translateX || 0
+            tool.translateY = translateY || 0
             tool.draw(sk)
         }
         for (const plugin of this.plugins) {
+            plugin.scale = scale || 1
+            plugin.translateX = translateX || 0
+            plugin.translateY = translateY || 0
             plugin.draw(sk)
         }
     }
@@ -219,32 +238,6 @@ class P5ToolsManager {
      */    
     public quitTool() {
         this.enabledTool = undefined
-    }
-
-    /**
-     * @description: 添加plugin
-     * @param {P5BasePlugin} plugin
-     * @param {P5BaseTool} controlTools
-     * @return {*}
-     */    
-    public usePlugin(plugin: P5BasePlugin, controlTools: P5BaseTool<any>[]) {
-        const plug = _.find(this.plugins, ['name', plugin.name])
-        if (plug) {
-            console.error('%s已存在, 请勿重复添加', plugin.name)
-        } else {
-            plugin.tools = controlTools
-            this.plugins.push(plugin)
-        }
-        for (let i = 0; i < this.plugins.length; i ++) {
-            const plugin = this.plugins[i]
-            plugin.totalPluginsCount = this.plugins.length
-            plugin.pluginIndex = i
-        }
-        for (const tool of this.tools) {
-            tool.pluginsCount = this.plugins.length
-        }
-        
-        return this
     }
     
 }

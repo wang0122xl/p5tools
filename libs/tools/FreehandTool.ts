@@ -2,17 +2,17 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-02 17:30:39
+ * @LastEditTime: 2022-03-03 18:23:14
  * @Description: file content
  */
 
-import P5BaseTool, { P5BaseAnnotation } from './baseTool'
+import P5BaseTool, { P5ToolAnnotation } from './baseTool'
 import P5 from 'p5'
 import { distanceBetween } from '../utils/index'
 import type { CursorPoint } from '../utils/index'
 import _ from 'lodash'
 
-interface FreehandToolAnnotation extends P5BaseAnnotation<'FreehandTool'> {
+interface FreehandToolAnnotation extends P5ToolAnnotation<'FreehandTool'> {
     freePaths: CursorPoint[]
 }
 
@@ -33,7 +33,7 @@ class FreehandTool extends P5BaseTool<FreehandToolAnnotation> {
 
     public touchMoved(sk: P5): void {
         const prevPoint = _.last(this.editingAnnotation?.freePaths) || this.editingAnnotation?.startPoint
-        const point = [sk.mouseX, sk.mouseY] as CursorPoint
+        const point = this.restorePoint([sk.mouseX, sk.mouseY])
 
         if (prevPoint && point && distanceBetween(prevPoint, point) > 4) {
             this.editingAnnotation?.freePaths.push(point)
@@ -42,8 +42,8 @@ class FreehandTool extends P5BaseTool<FreehandToolAnnotation> {
 
     public draw(sk: P5): void {
         for (const annotation of this.annotations || []) {
-            const startPoint = annotation.startPoint!
-            const endPoint = annotation.endPoint!
+            const startPoint = annotation.startPoint
+            const endPoint = annotation.endPoint
             const allPaths = [startPoint, ...annotation.freePaths, endPoint]
             
             super.configAnnotation(sk, annotation)
@@ -55,12 +55,15 @@ class FreehandTool extends P5BaseTool<FreehandToolAnnotation> {
                 if (!end) {
                     break
                 }
+
+                const transformedStart = this.transformPoint(start!)
+                const transformedEnd = this.transformPoint(end!)
                 
                 sk.line(
-                    start[0],
-                    start[1],
-                    end[0],
-                    end[1]
+                    transformedStart[0],
+                    transformedStart[1],
+                    transformedEnd[0],
+                    transformedEnd[1]
                 )
             }
         }

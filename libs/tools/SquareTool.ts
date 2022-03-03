@@ -2,15 +2,15 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-02 13:10:18
+ * @LastEditTime: 2022-03-03 18:23:16
  * @Description: file content
  */
 
-import P5BaseTool, { P5BaseAnnotation } from './baseTool'
+import P5BaseTool, { P5ToolAnnotation } from './baseTool'
 import P5 from 'p5'
 import { CursorPoint } from '../utils'
 
-interface CircleToolAnnotation extends P5BaseAnnotation<'SquareTool'> {
+interface CircleToolAnnotation extends P5ToolAnnotation<'SquareTool'> {
 
 }
 
@@ -21,19 +21,19 @@ class SquareTool extends P5BaseTool<CircleToolAnnotation> {
         super('SquareTool', annotations)
     }
 
-    public getPluginOrigin(annotation: P5BaseAnnotation<string>): CursorPoint {
-        if (!annotation.endPoint || !annotation.startPoint) {
+    public getPluginOrigin(annotation: P5ToolAnnotation<string>): CursorPoint {
+        const startPoint = annotation.transformedStartPoint()
+        const endPoint = annotation.transformedEndPoint()
+        if (!endPoint || !startPoint) {
             return [0, 0]
         }
-
-        const startPoint = [annotation.startPoint[0] + annotation.translateX, annotation.startPoint[1] + annotation.translateY]
-        const endPoint = [annotation.endPoint[0] + annotation.translateX, annotation.endPoint[1] + annotation.translateY]
+        
         const xParams = [startPoint[0], endPoint[0]]
         const yParams = [startPoint[1], endPoint[1]]
 
         return [
-            Math.max(...xParams),
-            Math.max(...yParams) - this.pluginItemWH
+            Math.max(...xParams) + (annotation.options.strokeWeight || 1) * this.scale,
+            Math.max(...yParams) - this.pluginItemWH + (annotation.options.strokeWeight || 1) * this.scale / 2
         ]
     }
 
@@ -42,12 +42,13 @@ class SquareTool extends P5BaseTool<CircleToolAnnotation> {
         this.reverseStartEndPointByOrder()
     }
 
-    public pointInAnnotation(point: CursorPoint, annotation: P5BaseAnnotation<string>): boolean {
-        if (!annotation.startPoint || !annotation.endPoint) {
+    public pointInAnnotation(point: CursorPoint, annotation: P5ToolAnnotation<string>): boolean {
+        const startPoint = annotation.transformedStartPoint()
+        const endPoint = annotation.transformedEndPoint()
+        if (!endPoint || !startPoint) {
             return false
         }
-        const startPoint = [annotation.startPoint[0] + annotation.translateX, annotation.startPoint[1] + annotation.translateY]
-        const endPoint = [annotation.endPoint[0] + annotation.translateX, annotation.endPoint[1] + annotation.translateY]
+
         const xParams = [startPoint[0], endPoint[0]]
         const yParams = [startPoint[1], endPoint[1]]
 
@@ -59,43 +60,29 @@ class SquareTool extends P5BaseTool<CircleToolAnnotation> {
         ) {
             return true
         }
-        const origin = this.getPluginOrigin(annotation)
 
-        if (
-            point[0] > origin[0] &&
-            point[0] < origin[0] + (this.pluginItemWH + this.pluginItemMargin) * this.pluginsCount &&
-            point[1] > origin[1] &&
-            point[1] < origin[1] + this.pluginItemWH
-        ) {
-            return true
-        }
-
-        return false
+        return this.pointInPluginLayer(point, annotation)
     }
-
-    // public pointInAnnotation(point: CursorPoint, annotation: P5BaseAnnotation<string>): boolean {
-    //     const tPoint = [point[0] - annotation.translateX, point[1] - annotation.translateY]
-    //     if (point)
-    // }
 
     public draw(sk: P5): void {
         for (const annotation of this.annotations || []) {
-            const startPoint = annotation.startPoint
-            const endPoint = annotation.endPoint
+            const startPoint = annotation.transformedStartPoint()
+            const endPoint = annotation.transformedEndPoint()
             if (!startPoint || !endPoint) {
                 return
             }
-            super.configAnnotation(sk, annotation)
 
+            super.configAnnotation(sk, annotation)
+            
             sk.quad(
-                startPoint[0] + annotation.translateX,
-                startPoint[1] + annotation.translateY,
-                endPoint[0] + annotation.translateX,
-                startPoint[1] + annotation.translateY,
-                endPoint[0] + annotation.translateX,
-                endPoint[1] + annotation.translateY,
-                startPoint[0] + annotation.translateX,
-                endPoint[1] + annotation.translateY
+                startPoint[0],
+                startPoint[1],
+                endPoint[0],
+                startPoint[1],
+                endPoint[0],
+                endPoint[1],
+                startPoint[0],
+                endPoint[1]
             )
 
         }
