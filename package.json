@@ -28,6 +28,6 @@
     "windicss": "^3.5.0"
   },
   "peerDependencies": {
-    "@types/p5": "^1.4.1"
+    "p5": "^1.4.1"
   }
 }
