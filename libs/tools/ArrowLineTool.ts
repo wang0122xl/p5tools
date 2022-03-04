@@ -2,13 +2,13 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 20:35:15
+ * @LastEditTime: 2022-03-04 14:57:52
  * @Description: file content
  */
 
 import P5BaseTool, { P5ToolAnnotation } from './baseTool'
 import P5 from 'p5'
-import { degreeBetween } from '../utils'
+import { degreeBetween } from '../utils/index'
 
 interface ArrowLineToolAnnotation extends P5ToolAnnotation<'ArrowLineTool'> {
 
