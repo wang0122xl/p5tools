@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 18:40:59
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 21:18:30
+ * @LastEditTime: 2022-03-04 14:09:52
  * @Description: file content
  */
 import { MouseEvent, useEffect, useState } from 'react'
@@ -94,8 +94,10 @@ const Pannel = (props: {
 
     const doEdit = async (anno: P5ToolAnnotation) => {
         const info = await editInfo(anno.info)
-        anno.info = info
-        getAnnotations()
+        if (info) {
+            anno.info = info
+            getAnnotations()
+        }
     }
 
     const doDelete = (anno: P5ToolAnnotation) => {

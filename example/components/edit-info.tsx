@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 18:56:36
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 20:47:03
+ * @LastEditTime: 2022-03-04 14:09:11
  * @Description: file content
  */
 
@@ -52,7 +52,7 @@ const InfoLayer = (props: {
     )
 }
 
-const editInfo = (info?: P5ToolBaseInfo): Promise<P5ToolBaseInfo> => {
+const editInfo = (info?: P5ToolBaseInfo): Promise<P5ToolBaseInfo | false> => {
     return new Promise((resolve) => {
         let div = document.createElement('div')
         div.style.position = 'fixed'
@@ -76,7 +76,7 @@ const editInfo = (info?: P5ToolBaseInfo): Promise<P5ToolBaseInfo> => {
                 info={info}
                 onCancel={() => {
                     close()
-                    resolve({})
+                    resolve(false)
                 }}
                 onConfirm={t => {
                     close()

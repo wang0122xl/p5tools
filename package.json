@@ -26,5 +26,8 @@
     "vite": "^2.7.13",
     "vite-plugin-windicss": "^1.8.1",
     "windicss": "^3.5.0"
+  },
+  "peerDependencies": {
+    "@types/p5": "^1.4.1"
   }
 }

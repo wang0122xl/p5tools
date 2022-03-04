@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 20:01:09
+ * @LastEditTime: 2022-03-04 13:12:59
  * @Description: file content
  */
 
@@ -22,8 +22,6 @@ import ScalePlugin from '../plugins/scale'
 
 
 import type { P5ToolOptions } from '../tools/baseTool'
-import _ from 'lodash'
-import { CursorPoint } from '../utils'
 
 type SKTouchStatus = 'start' | 'moving' | 'end'
 
@@ -94,8 +92,14 @@ class P5ToolsManager {
      * @return {*}
      */    
      public usePlugin(plugin: P5BasePlugin, controlTools: P5BaseTool<any>[]) {
-        const plug = _.find(this.plugins, ['name', plugin.name])
-        if (plug) {
+         let flag = false
+         for (const plug of this.plugins) {
+             if (plugin.name === plug.name) {
+                 flag = true
+                 break
+             }
+         }
+        if (flag) {
             console.error('%s已存在, 请勿重复添加', plugin.name)
         } else {
             plugin.tools = controlTools

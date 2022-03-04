@@ -2,14 +2,13 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 19:59:00
+ * @LastEditTime: 2022-03-04 13:10:50
  * @Description: 基础工具
  */
 
 import P5, { THE_STYLE } from 'p5'
 import { distanceBetween } from '../../utils/index'
 import type { CursorPoint } from '../../utils/index'
-import _ from 'lodash'
 import emitter, { EMITTER_ANNOTATION_INFO_UPDATED } from "../../utils/emitter"
 
 export interface P5ToolOptions {
