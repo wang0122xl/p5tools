@@ -2,18 +2,18 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 20:33:22
+ * @LastEditTime: 2022-03-05 13:37:33
  * @Description: file content
  */
 import { useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
 import './app.less'
 import P5 from 'p5'
-import P5ToolsManager from '../libs/manager'
+import P5ToolsManager from 'libs/manager'
 import Pannel from './components/pannel'
 import { CursorPoint } from '../libs/utils'
-import CropTool from '../libs/tools/cropTool'
+import CropTool from 'libs/tools/cropTool'
 import { createPortal, render, unmountComponentAtNode } from 'react-dom'
-import P5BaseTool, { P5ToolGetInfo } from '../libs/tools/baseTool'
+import P5BaseTool, { P5ToolGetInfo } from 'libs/tools/baseTool'
 import moment from 'moment'
 import editInfo from './components/edit-info'
 
