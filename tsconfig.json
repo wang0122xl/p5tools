@@ -17,5 +17,5 @@
     "jsx": "react-jsx",
     "baseUrl": "."
   },
-  "include": ["./example/**/*.(ts|tsx)", "./libs/**/*.(ts|tsx)"]
+  "include": ["./example/**/*", "./libs/**/*"]
 }
