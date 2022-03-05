@@ -1,16 +1,16 @@
 {
   "name": "p5tools",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": false,
   "homepage": "https://wang0122xl.github.io/p5tools/",
-  "main": "src/p5tools.es.js",
+  "main": "src/index.d.ts",
   "files": [
-      "src/*"
+    "src/*"
   ],
   "keywords": [
-      "p5js",
-      "tools",
-      "annotations"
+    "p5js",
+    "tools",
+    "annotations"
   ],
   "license": "MIT",
   "repository": {
