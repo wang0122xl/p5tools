@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-05 14:10:33
+ * @LastEditTime: 2022-03-05 14:15:51
  * @Description: file content
  */
 import { defineConfig } from 'vite'
@@ -11,6 +11,7 @@ import WindiCSS from 'vite-plugin-windicss'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    base: '/p5tools/',
     server: {
         host: '0.0.0.0',
         port: 3012
