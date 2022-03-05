@@ -2,13 +2,13 @@
  * @Date: 2022-03-01 13:16:30
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 19:33:33
+ * @LastEditTime: 2022-03-05 13:45:25
  * @Description: file content
  */
 import P5 from 'p5'
-import P5BaseTool, { P5ToolAnnotation } from '../tools/baseTool'
-import { CursorPoint } from '../utils'
-import eventBus, { EMITTER_PLUGIN_ACTIVED } from '../utils/emitter'
+import P5BaseTool, { P5ToolAnnotation } from 'libs/tools/baseTool'
+import { CursorPoint } from 'libs/utils'
+import eventBus, { EMITTER_PLUGIN_ACTIVED } from 'libs/utils/emitter'
 
 class P5BasePlugin {
     static readonly pluginName: string

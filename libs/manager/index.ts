@@ -2,23 +2,23 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-04 14:38:58
+ * @LastEditTime: 2022-03-05 13:45:02
  * @Description: file content
  */
 
 import P5 from 'p5'
-import P5BaseTool, { P5ToolAnnotation, P5ToolGetInfo } from '../tools/baseTool'
-import CircleTool from '../tools/circleTool'
-import SquareTool from '../tools/squareTool'
-import LineTool from '../tools/lineTool'
-import ArrowLineTool from '../tools/arrowLineTool'
-import FreehandTool from '../tools/freehandTool'
-import TextTool from '../tools/textTool'
-import CropTool from '../tools/cropTool'
+import P5BaseTool, { P5ToolAnnotation, P5ToolGetInfo } from 'libs/tools/baseTool'
+import CircleTool from 'libs/tools/circleTool'
+import SquareTool from 'libs/tools/squareTool'
+import LineTool from 'libs/tools/lineTool'
+import ArrowLineTool from 'libs/tools/arrowLineTool'
+import FreehandTool from 'libs/tools/freehandTool'
+import TextTool from 'libs/tools/textTool'
+import CropTool from 'libs/tools/cropTool'
 
-import P5BasePlugin from '../plugins'
-import MovePlugin from '../plugins/move'
-import ScalePlugin from '../plugins/scale'
+import P5BasePlugin from 'libs/plugins'
+import MovePlugin from 'libs/plugins/move'
+import ScalePlugin from 'libs/plugins/scale'
 
 
 import type { P5ToolOptions } from '../tools/baseTool'
