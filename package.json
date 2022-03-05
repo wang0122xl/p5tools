@@ -1,14 +1,24 @@
 {
   "name": "p5tools",
-  "version": "0.0.1",
+  "version": "0.0.4",
+  "private": false,
   "homepage": "https://wang0122xl.github.io/p5tools/",
-  "main": "",
+  "main": "src/p5tools.es.js",
+  "files": [
+      "src/*"
+  ],
+  "keywords": [
+      "p5js",
+      "tools",
+      "annotations"
+  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/wang0122xl/p5tools"
   },
   "author": {
-    "name": "wang0122xl@163.com"
+    "name": "fe_jason"
   },
   "scripts": {
     "dev": "vite",
