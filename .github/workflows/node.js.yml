@@ -37,6 +37,6 @@ jobs:
         publish_dir: ./dist
     
     - name: publish to NPM
-    - uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v1
       with:
         token: ${{ secrets.NPM_TOKEN }}
