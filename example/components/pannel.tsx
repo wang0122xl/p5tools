@@ -2,15 +2,15 @@
  * @Date: 2022-02-28 18:40:59
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-05 13:38:49
+ * @LastEditTime: 2022-03-05 13:52:58
  * @Description: file content
  */
 import { MouseEvent, useEffect, useState } from 'react'
 import chooseOptions from './choose-options'
 import './pannel.less'
-import P5ToolsManager from 'libs/manager'
+import P5ToolsManager from '../../libs/manager'
 import P5 from 'p5'
-import emitter, { EMITTER_ANNOTATION_CROPPED, EMITTER_ANNOTATION_INFO_UPDATED } from 'libs/utils/emitter'
+import emitter, { EMITTER_ANNOTATION_CROPPED, EMITTER_ANNOTATION_INFO_UPDATED } from '../../libs/utils/emitter'
 import { P5ToolAnnotation, P5ToolBaseInfo } from 'libs/tools/baseTool'
 import moment from 'moment'
 import editInfo from './edit-info'
