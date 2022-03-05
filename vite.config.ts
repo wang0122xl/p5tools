@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-05 13:37:03
+ * @LastEditTime: 2022-03-05 13:42:17
  * @Description: file content
  */
 import { defineConfig } from 'vite'
@@ -18,7 +18,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            'libs': '../libs'
+            'libs': '/libs'
         }
     },
     css: {
