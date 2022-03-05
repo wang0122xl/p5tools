@@ -2,13 +2,13 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-04 14:57:20
+ * @LastEditTime: 2022-03-05 13:46:54
  * @Description: file content
  */
 
-import P5BaseTool, { P5ToolAnnotation } from './baseTool'
+import P5BaseTool, { P5ToolAnnotation } from 'libs/tools/baseTool/index'
 import P5 from 'p5'
-import { CursorPoint, distanceBetween } from '../utils/index'
+import { CursorPoint, distanceBetween } from 'libs/utils/index'
 
 interface CircleToolAnnotation extends P5ToolAnnotation<'CircleTool'> {
 
