@@ -2,13 +2,14 @@
  * @Date: 2022-03-01 13:27:23
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 14:33:32
+ * @LastEditTime: 2022-03-05 17:28:54
  * @Description: file content
  */
 
 import P5BasePlugin from ".";
 import P5 from 'p5'
-import ZoomPng from './assets/zoom.png'
+
+const ZoomPng = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAATtJREFUSEvllT1OxDAQhZ/jG3AMKLeiS0cD7VacIRklB2BzgESTgoaeZltoqNhuT7AcgQaJGzhBjmJkjEHZSahwl8gz3/y9scIfH+X8Z1m2SpLkKsbr+37ftu2TJJYBQEQpgOffHDDzZzDHgBxgA+AmMKzc9xIZhIA3rXVa1/XLMdHG7sYyeAdwAuCgtV7PhYSASmu9NcZsAZwtAfkGYOZNWZanS0GiAFvLAFJZsKQfA6Aoisuu6x6sDpqmeXSORsgawI6Zd2KAxHCqjUg8U53be/8YMO6v1OrGF+M4GAc3MOISEZFbL18UT0R2adrlOYy2GPCTGBcDRMQ4ZGKMuV0kg0CMbnf5EzyvRL4n19jwPZnVg3GK/EfKNtY/18x8L24yEfVTnlgxIM/zC6XUeQTyysx37r8YMHUffQC+w6kZYxwPvQAAAABJRU5ErkJggg=='
 
 class ScalePlugin extends P5BasePlugin {
     constructor() {

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-      "target": "ESNext",
+      "target": "es5",
       "useDefineForClassFields": true,
       "lib": ["DOM", "DOM.Iterable", "ESNext"],
       "allowJs": false,
@@ -9,13 +9,14 @@
       "allowSyntheticDefaultImports": true,
       "strict": true,
       "forceConsistentCasingInFileNames": true,
-      "module": "ESNext",
+      "module": "ES2015",
       "moduleResolution": "Node",
       "resolveJsonModule": true,
       "isolatedModules": true,
-      "emitDeclarationOnly": true,
       "declaration": true,
-      "outDir": "src"
+      "noEmit": false,
+      "outDir": "src",
+
     },
     "include": ["./libs/index.ts", "types"]
   }
