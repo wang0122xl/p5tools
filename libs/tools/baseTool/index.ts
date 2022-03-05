@@ -2,9 +2,11 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-04 13:10:50
+ * @LastEditTime: 2022-03-05 17:50:02
  * @Description: 基础工具
  */
+
+// TODO:p5BaseTool translate场景尚未实现
 
 import P5, { THE_STYLE } from 'p5'
 import { distanceBetween } from '../../utils/index'
