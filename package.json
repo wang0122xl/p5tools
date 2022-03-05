@@ -1,14 +1,25 @@
 {
-  "name": "example",
+  "name": "p5tools",
   "version": "0.0.1",
+  "homepage": "https://wang0122xl.github.io/p5tools/",
+  "main": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wang0122xl/p5tools"
+  },
+  "author": {
+    "name": "wang0122xl@163.com"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublish": "tsc && vite build --config vite.lib.config.ts && tsc -p tsconfig.lib.json"
   },
   "devDependencies": {
     "@types/events": "^3.0.0",
     "@types/lodash": "^4.14.179",
+    "@types/node": "^17.0.21",
     "@types/p5": "^1.4.1",
     "@types/react": "^17.0.33",
     "@types/react-color": "^3.0.6",

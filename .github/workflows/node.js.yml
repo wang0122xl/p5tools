@@ -35,3 +35,11 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
+    - id: publish
+    uses: JS-DevTools/npm-publish@v1
+    with:
+      token: ${{ secrets.NPM_TOKEN }}
+
+    - if: steps.publish.outputs.type != 'none'
+    run: |
+      echo "Version changed: ${{ steps.publish.outputs.old-version }} => ${{ steps.publish.outputs.version }}"	

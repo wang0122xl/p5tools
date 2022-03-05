@@ -25,3 +25,5 @@ dist-ssr
 
 .yarn/cache
 .history
+
+src
