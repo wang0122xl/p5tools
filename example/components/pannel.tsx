@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 18:40:59
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-05 17:48:07
+ * @LastEditTime: 2022-03-07 13:46:19
  * @Description: file content
  */
 import { MouseEvent, useEffect, useState } from 'react'
@@ -18,7 +18,9 @@ import CropTool from 'libs/tools/cropTool'
 
 const Pannel = (props: {
     manager: P5ToolsManager
-    sk?: P5
+    sk?: P5,
+    onChangeDragging: () => void
+    dragging: boolean
 }) => {
     const [showAnnotations, setShowAnnotations] = useState(true)
     const [annotations, setAnnotations] = useState<P5ToolAnnotation[]>([])
@@ -139,6 +141,7 @@ const Pannel = (props: {
                     }
                     setShowImages(!showImages)
                 }}>{showImages ? '隐藏截图' : '显示截图'}</p>
+                <p onClick={e => props.onChangeDragging()}>{props.dragging ? '取消拖动' : '拖动'}</p>
 
             </div>
             {

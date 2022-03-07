@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-05 13:51:03
+ * @LastEditTime: 2022-03-07 13:47:01
  * @Description: file content
  */
 import { useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
@@ -23,6 +23,11 @@ function App() {
     const [sk, setSk] = useState<P5>()
     const [wrapper, setWrapper] = useState<P5.Element>()
     const [scale, setScale] = useState(1)
+    const [dragging, setDragging] = useState(false)
+    const [translate, setTranslate] = useState({
+        x: 0,
+        y: 0
+    })
 
     const [cropLayerPosition, setCropLayerPosition] = useState<CursorPoint>()
 
@@ -102,25 +107,36 @@ function App() {
         }
         (sk as any).clear();
         sk.resizeCanvas(image.width * scale, image.height * scale, false)
-        sk.image(image, 0, 0, image.width * scale, image.height * scale)
-        toolsManager.draw(sk!, scale)
-    }, [scale, sk, image])
+        sk.image(image, translate.x, translate.y, image.width * scale, image.height * scale)
+        toolsManager.draw(sk!, scale, translate.x, translate.y)
+    }, [scale, sk, image, translate])
 
     useEffect(() => {
         if (sk && image) {
             sk.draw = draw
             sk.touchStarted = (event: any) => {
                 if (event.target.nodeName === 'CANVAS') {
-                    toolsManager.touchStarted(sk, event)
+                    if (!dragging) {
+                        toolsManager.touchStarted(sk, event)
+                    }
                 }
             }
             sk.touchMoved = (event: any) => {
-                toolsManager.touchMoved(sk)
+                if (!dragging) {
+                    toolsManager.touchMoved(sk)
+                } else {
+                    setTranslate({
+                        x: translate.x + sk.mouseX - sk.pmouseX,
+                        y: translate.y + sk.mouseY - sk.pmouseY
+                    })
+                }
             }
             sk.touchEnded = () => {
-                toolsManager.touchEnded(sk)
-                if (toolsManager.enabledTool?.name !== P5ToolsManager.CropTool.toolName) {
-                    toolsManager.quitTool()
+                if (!dragging) {
+                    toolsManager.touchEnded(sk)
+                    if (toolsManager.enabledTool?.name !== P5ToolsManager.CropTool.toolName) {
+                        toolsManager.quitTool()
+                    }
                 }
             }
 
@@ -141,7 +157,7 @@ function App() {
                 }
             }
         }
-    }, [sk, image, draw])
+    }, [sk, image, draw, dragging])
 
     useEffect(() => {
         if (p5ref.current) {
@@ -174,7 +190,7 @@ function App() {
     return (
         <div className='relative flex items-center justify-center w-screen h-screen overflow-hidden' id='test'>
             <div ref={p5ref} className='absolute left-0 right-0 top-0 bottom-0' />
-            <Pannel manager={toolsManager} sk={sk} />
+            <Pannel manager={toolsManager} sk={sk} onChangeDragging={() => setDragging(!dragging)} dragging={dragging} />
         </div>
     )
 }

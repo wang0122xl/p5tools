@@ -2,11 +2,9 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-05 17:50:02
+ * @LastEditTime: 2022-03-07 14:43:47
  * @Description: 基础工具
  */
-
-// TODO:p5BaseTool translate场景尚未实现
 
 import P5, { THE_STYLE } from 'p5'
 import { distanceBetween } from '../../utils/index'
@@ -81,8 +79,8 @@ class P5BaseTool<
         this.state = (initialState || {}) as ToolState
     }
 
-    public transformValue = (v: number, translate?: number) => {
-        return v * this.scale + (translate || 0)
+    public transformValue = (v: number) => {
+        return v * this.scale
     }
 
     /**
@@ -92,8 +90,8 @@ class P5BaseTool<
      */    
     public transformPoint = (point: CursorPoint) => {
         return [
-            this.transformValue(point[0] + this.translateX),
-            this.transformValue(point[1] + this.translateY)
+            this.transformValue(point[0]) + this.translateX,
+            this.transformValue(point[1]) + this.translateY
         ] as CursorPoint
     }
 
@@ -104,8 +102,8 @@ class P5BaseTool<
      */    
     public restorePoint = (point: CursorPoint) => {
         return [
-            point[0] / this.scale - this.translateX,
-            point[1] / this.scale - this.translateY
+            (point[0] - this.translateX) / this.scale,
+            (point[1] - this.translateY) / this.scale
         ] as CursorPoint
     }
 
@@ -168,8 +166,8 @@ class P5BaseTool<
                     return undefined
                 }
                 return [
-                    self.transformValue(this.startPoint[0] + this.translateX),
-                    self.transformValue(this.startPoint[1] + this.translateY)
+                    self.transformValue(this.startPoint[0] + this.translateX) + self.translateX,
+                    self.transformValue(this.startPoint[1] + this.translateY) + self.translateY
                 ] as CursorPoint
             },
             transformedEndPoint: function () {
@@ -177,8 +175,8 @@ class P5BaseTool<
                     return undefined
                 }
                 return [
-                    self.transformValue(this.endPoint[0] + this.translateX),
-                    self.transformValue(this.endPoint[1] + this.translateY)
+                    self.transformValue(this.endPoint[0] + this.translateX) + self.translateX,
+                    self.transformValue(this.endPoint[1] + this.translateY) + self.translateY
                 ] as CursorPoint
             }
         }
