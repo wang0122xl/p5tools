@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-07 13:47:01
+ * @LastEditTime: 2022-03-07 14:51:27
  * @Description: file content
  */
 import { useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
@@ -16,6 +16,7 @@ import { createPortal, render, unmountComponentAtNode } from 'react-dom'
 import P5BaseTool, { P5ToolGetInfo } from '../libs/tools/baseTool'
 import moment from 'moment'
 import editInfo from './components/edit-info'
+import _ from 'lodash'
 
 function App() {
     const p5ref = useRef<HTMLDivElement>(null!)
@@ -48,6 +49,11 @@ function App() {
 
     const getInfo: P5ToolGetInfo = async (tool: P5BaseTool<any>) => {
         const info = await editInfo()
+        if (info) {
+
+        } else {
+            _.last(tool.annotations).remove()
+        }
         return {
             ...info,
             time: new Date().getTime()
