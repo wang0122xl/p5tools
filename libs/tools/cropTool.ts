@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 20:55:57
+ * @LastEditTime: 2022-03-08 10:26:08
  * @Description: file content
  */
 
@@ -135,11 +135,7 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         this.state.cropedImages = images || []
     }
 
-    public touchStarted(sk: P5, event: any): void {
-        if (event.target.nodeName !== 'CANVAS') {
-            return
-        }
-
+    public touchStarted(sk: P5): void {
         const startPoint = this.editingAnnotation?.startPoint
         const endPoint = this.editingAnnotation?.endPoint
         const restoredPoint = this.restorePoint([sk.mouseX, sk.mouseY])

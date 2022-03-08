@@ -49,6 +49,7 @@
     "windicss": "^3.5.0"
   },
   "peerDependencies": {
-    "p5": "^1.4.1"
+    "p5": "^1.4.1",
+    "events": "^3.3.0"
   }
 }
