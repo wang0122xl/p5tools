@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-07 14:51:27
+ * @LastEditTime: 2022-03-08 10:36:52
  * @Description: file content
  */
 import { useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
@@ -123,7 +123,7 @@ function App() {
             sk.touchStarted = (event: any) => {
                 if (event.target.nodeName === 'CANVAS') {
                     if (!dragging) {
-                        toolsManager.touchStarted(sk, event)
+                        toolsManager.touchStarted(sk)
                     }
                 }
             }
