@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-08 10:25:12
+ * @LastEditTime: 2022-03-10 17:41:18
  * @Description: 基础工具
  */
 
@@ -69,7 +69,11 @@ class P5BaseTool<
      * @param {*} Promise
      * @return {*}
      */    
-     public getToolInfo?: P5ToolGetInfo
+     public getToolInfo?: P5ToolGetInfo = () => {
+         return Promise.resolve({
+             time: new Date().getTime()
+         })
+     }
 
     constructor (
         name: AnnotationType['belong'],

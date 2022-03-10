@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-08 10:36:52
+ * @LastEditTime: 2022-03-10 22:02:33
  * @Description: file content
  */
 import { useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
@@ -171,7 +171,6 @@ function App() {
                 setSk(sk)
                 sk.preload = () => {
                     sk.loadImage('https://picsum.photos/1200/600', t => {
-                        console.log(t)
                         setImage(t)
                     })
                     toolsManager.preload(sk)

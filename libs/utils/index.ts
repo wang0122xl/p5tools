@@ -2,7 +2,7 @@
  * @Date: 2022-02-25 17:53:30
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 11:46:27
+ * @LastEditTime: 2022-03-10 21:45:32
  * @Description: file content
  */
 
@@ -26,7 +26,16 @@ function degreeBetween(start: CursorPoint, end: CursorPoint, mode?: 'RADIANS' | 
     return angle
 }
 
+function promisifyToBlob(canvas: HTMLCanvasElement, type?: string, quality?: number): Promise<Blob | null> {
+    return new Promise(resolve => {
+        canvas.toBlob(blob => {
+            resolve(blob)
+        }, type, quality)
+    })
+}
+
 export {
     distanceBetween,
     degreeBetween,
+    promisifyToBlob
 }

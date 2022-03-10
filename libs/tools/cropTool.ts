@@ -2,13 +2,13 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 17:08:49
+ * @LastEditTime: 2022-03-10 21:59:58
  * @Description: file content
  */
 
 import P5BaseTool, { P5ToolAnnotation, P5ToolBaseInfo, P5ToolGetInfo } from './baseTool'
 import P5 from 'p5'
-import { CursorPoint } from '../utils'
+import { CursorPoint, promisifyToBlob } from '../utils'
 import emitter, { EMITTER_ANNOTATION_CROPPED } from '../utils/emitter'
 
 type CursorPosition = 'top' | 'top-right' | 'top-left' | 'left' | 'right' | 'bottom' | 'bottom-left' | 'bottom-right' | 'in-rect' | 'out-rect'
@@ -27,6 +27,7 @@ const CursorStyleMapping: Record<CursorPosition, string> = {
 }
 
 const offset = 6 // 误差
+
 interface CropToolAnnotation extends P5ToolAnnotation<'CropTool'> {
     
 }
@@ -108,33 +109,31 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
 
     private initialGetInfo: P5ToolGetInfo = () => Promise.resolve({})
 
-    public async doCrop (sk: P5, beforeCallback?: () => Promise<any>, endCallback?: () => Promise<any>) { 
-        try {
-            await beforeCallback?.()
-        } catch (e) {
-            return Promise.reject(e)
-        }
+    public async doCrop (sk: P5, beforeCallback?: (sk: P5) => Promise<unknown>, endCallback?: (sk: P5) => Promise<unknown>) {
         const anno = this.annotations[0]
         const [startX, startY] = anno.transformedStartPoint()!
-        const [endX, endY] = anno.transformedEndPoint()!
+        const [endX, endY] = anno.transformedEndPoint()!;
+
+        const prevImage = sk.get()
+        sk.noLoop();
+        (sk as any).clear()
+
+        await beforeCallback?.(sk)
+        sk.image(prevImage, 0, 0, sk.width, sk.height)
+        await endCallback?.(sk)
 
         const cropCanvas = ((sk.get(startX + offset / 2, startY + offset / 2, endX - startX - offset, endY - startY - offset) as any).canvas) as HTMLCanvasElement
-        cropCanvas.toBlob(async blob => {
-            if (blob) {
-                const url = URL.createObjectURL(blob);
-                const info = await (this.getToolInfo || this.initialGetInfo)(this);
-                this?.images.push({
-                    info,
-                    url
-                })
-                emitter.emit(EMITTER_ANNOTATION_CROPPED)
-                try {
-                    await endCallback?.()
-                } catch (e) {
-                    return Promise.reject(e)
-                }
-            }
-        })
+        const cropBlob = await promisifyToBlob(cropCanvas)
+        if (cropBlob) {
+            const url = URL.createObjectURL(cropBlob)
+            const info = await (this.getToolInfo || this.initialGetInfo)(this);
+            this?.images.push({
+                info,
+                url
+            })
+            emitter.emit(EMITTER_ANNOTATION_CROPPED)
+            sk.loop()
+        }
 
         this.endCrop()
     }
@@ -343,6 +342,7 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         })
 
         sk.image(this.pg as any, 0, 0, sk.width, sk.height)
+
     }
 }
 
