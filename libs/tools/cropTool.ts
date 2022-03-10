@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 21:59:58
+ * @LastEditTime: 2022-03-10 22:39:01
  * @Description: file content
  */
 
@@ -107,8 +107,6 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         this.annotations = []
     }
 
-    private initialGetInfo: P5ToolGetInfo = () => Promise.resolve({})
-
     public async doCrop (sk: P5, beforeCallback?: (sk: P5) => Promise<unknown>, endCallback?: (sk: P5) => Promise<unknown>) {
         const anno = this.annotations[0]
         const [startX, startY] = anno.transformedStartPoint()!
@@ -126,7 +124,7 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         const cropBlob = await promisifyToBlob(cropCanvas)
         if (cropBlob) {
             const url = URL.createObjectURL(cropBlob)
-            const info = await (this.getToolInfo || this.initialGetInfo)(this);
+            const info = await this.getToolInfo(this);
             this?.images.push({
                 info,
                 url

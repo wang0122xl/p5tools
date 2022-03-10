@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-04 14:57:52
+ * @LastEditTime: 2022-03-10 22:41:20
  * @Description: file content
  */
 
@@ -16,17 +16,16 @@ interface ArrowLineToolAnnotation extends P5ToolAnnotation<'ArrowLineTool'> {
 
 class ArrowLineTool extends P5BaseTool<ArrowLineToolAnnotation> {
     static toolName = 'ArrowLineTool'
-
-    private async defaultGetToolInfo () {
-        const title = prompt('请输入') || ''
-        return {
-            title,
-            time: new Date().getTime()
-        }
-    }
     
     constructor (annotations?: ArrowLineToolAnnotation[]) {
         super('ArrowLineTool', annotations)
+        this.getToolInfo = () => {
+            const title = prompt('请输入') || ''
+            return Promise.resolve({
+                title,
+                time: new Date().getTime()
+            })
+        }
     }
 
     public draw(sk: P5): void {

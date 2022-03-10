@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-08 10:25:21
+ * @LastEditTime: 2022-03-10 22:46:40
  * @Description: file content
  */
 
@@ -48,12 +48,9 @@ class P5ToolsManager {
     static MovePlugin = MovePlugin
     static ScalePlugin = ScalePlugin
 
-    private _getToolInfo?: P5ToolGetInfo
-
-    constructor (getToolInfo?: P5ToolGetInfo) {
+    constructor () {
         this.tools = []
         this._toolsMapping = {}
-        this._getToolInfo = getToolInfo
     }
 
     set enabledTool (tool: P5BaseTool<any> | undefined) {
@@ -72,14 +69,14 @@ class P5ToolsManager {
      * @param {P5BaseTool} tool
      * @return {*}
      */    
-    public useTool(tool: P5BaseTool<any>) {
+    public useTool(tool: P5BaseTool<any>, getToolInfo?: P5ToolGetInfo) {
         const included = !!this.findTool(tool.name)
         if (included) {
             console.error('tool: %s已存在, 请勿重复添加')
             return this
         }
         this._toolsMapping[tool.name] = tool
-        tool.getToolInfo = tool.getToolInfo || this._getToolInfo
+        tool.getToolInfo = getToolInfo || tool.getToolInfo
         this.tools.push(tool)
 
         return this

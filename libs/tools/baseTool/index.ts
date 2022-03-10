@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 17:41:18
+ * @LastEditTime: 2022-03-10 22:40:17
  * @Description: 基础工具
  */
 
@@ -69,7 +69,7 @@ class P5BaseTool<
      * @param {*} Promise
      * @return {*}
      */    
-     public getToolInfo?: P5ToolGetInfo = () => {
+     public getToolInfo: P5ToolGetInfo = () => {
          return Promise.resolve({
              time: new Date().getTime()
          })
@@ -274,7 +274,7 @@ class P5BaseTool<
             this.annotations?.pop()
             this.editingAnnotation = undefined
         } else {
-            this.getToolInfo?.(this).then(info => {
+            this.getToolInfo(this).then(info => {
                 if (this.editingAnnotation) {
                     this.editingAnnotation.info = info
                     emitter.emit(EMITTER_ANNOTATION_INFO_UPDATED)

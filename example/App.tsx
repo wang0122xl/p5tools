@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 22:02:33
+ * @LastEditTime: 2022-03-10 22:48:28
  * @Description: file content
  */
 import { useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
@@ -61,15 +61,15 @@ function App() {
     }
 
     const [toolsManager] = useState<P5ToolsManager>(() => {
-        const toolsManager = new P5ToolsManager(getInfo)
+        const toolsManager = new P5ToolsManager()
         toolsManager
-            .useTool(textTool)
-            .useTool(circleTool)
-            .useTool(squareTool)
-            .useTool(lineTool)
-            .useTool(freehandTool)
-            .useTool(arrowLineTool)
-            .useTool(cropTool)
+            .useTool(textTool, getInfo)
+            .useTool(circleTool, getInfo)
+            .useTool(squareTool, getInfo)
+            .useTool(lineTool, getInfo)
+            .useTool(freehandTool, getInfo)
+            .useTool(arrowLineTool, getInfo)
+            .useTool(cropTool, getInfo)
         toolsManager
             .usePlugin(new P5ToolsManager.MovePlugin(), [circleTool, squareTool, textTool])
             .usePlugin(new P5ToolsManager.ScalePlugin(), [squareTool, circleTool])
