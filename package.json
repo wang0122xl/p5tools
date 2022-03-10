@@ -1,6 +1,6 @@
 {
   "name": "p5tools",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "homepage": "https://wang0122xl.github.io/p5tools/",
   "main": "src/index.d.ts",
@@ -35,7 +35,6 @@
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^17.0.10",
     "@vitejs/plugin-react": "^1.0.7",
-    "events": "^3.3.0",
     "less": "^4.1.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
@@ -47,6 +46,9 @@
     "vite": "^2.7.13",
     "vite-plugin-windicss": "^1.8.1",
     "windicss": "^3.5.0"
+  },
+  "dependencies": {
+    "events": "^3.3.0"
   },
   "peerDependencies": {
     "events": "^3.3.0",
