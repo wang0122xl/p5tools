@@ -2,11 +2,14 @@
  * @Date: 2022-03-05 13:59:23
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-05 17:48:14
+ * @LastEditTime: 2022-03-10 22:26:43
  * @Description: file content
 -->
 # p5tools
 ## common tools for p5
+
+> demo for basic usage, [click here](wang0122xl.github.io/p5tools/)<br>
+> cowork with openseadragon, [click hear](https://github.com/wang0122xl/p5tools-openseadragon-demo)
 
 ### install
 ` yarn add p5tools `
@@ -19,7 +22,6 @@ toolsManager.useTool(textTool)
 toolsManager.usePlugin(new P5ToolsManager.ScalePlugin([textTool]))
 
 new P5((sk: P5) => {
-    setSk(sk)
     sk.preload = () => {
         toolsManager.preload(sk)
     }
