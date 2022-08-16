@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 22:39:01
+ * @LastEditTime: 2022-08-16 17:53:56
  * @Description: file content
  */
 
@@ -107,21 +107,27 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         this.annotations = []
     }
 
-    public async doCrop (sk: P5, beforeCallback?: (sk: P5) => Promise<unknown>, endCallback?: (sk: P5) => Promise<unknown>) {
-        const anno = this.annotations[0]
-        const [startX, startY] = anno.transformedStartPoint()!
-        const [endX, endY] = anno.transformedEndPoint()!;
-
+    public async pureCrop(sk: P5, startPoint: CursorPoint, endPoint: CursorPoint, type?: string) {
+        const [startX, startY] = startPoint
+        const [endX, endY] = endPoint
         const prevImage = sk.get()
         sk.noLoop();
         (sk as any).clear()
+        sk.image(prevImage, 0, 0, sk.width, sk.height)
+        const cropCanvas = ((sk.get(startX + offset / 2, startY + offset / 2, endX - startX - offset, endY - startY - offset) as any).canvas) as HTMLCanvasElement
+
+        const cropBlob = await promisifyToBlob(cropCanvas, type)
+        sk.loop()
+        return cropBlob
+    }
+
+    public async doCrop (sk: P5, beforeCallback?: (sk: P5) => Promise<unknown>, endCallback?: (sk: P5) => Promise<unknown>) {
+        const anno = this.annotations[0]
 
         await beforeCallback?.(sk)
-        sk.image(prevImage, 0, 0, sk.width, sk.height)
+        const cropBlob = await this.pureCrop(sk, anno.transformedStartPoint()!, anno.transformedEndPoint()!)
         await endCallback?.(sk)
 
-        const cropCanvas = ((sk.get(startX + offset / 2, startY + offset / 2, endX - startX - offset, endY - startY - offset) as any).canvas) as HTMLCanvasElement
-        const cropBlob = await promisifyToBlob(cropCanvas)
         if (cropBlob) {
             const url = URL.createObjectURL(cropBlob)
             const info = await this.getToolInfo(this);
@@ -130,7 +136,6 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
                 url
             })
             emitter.emit(EMITTER_ANNOTATION_CROPPED)
-            sk.loop()
         }
 
         this.endCrop()

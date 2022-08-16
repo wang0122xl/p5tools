@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 22:46:40
+ * @LastEditTime: 2022-08-11 13:04:06
  * @Description: file content
  */
 
@@ -22,6 +22,7 @@ import ScalePlugin from '../plugins/scale'
 
 
 import type { P5ToolOptions } from '../tools/baseTool'
+import _ from 'lodash'
 
 type SKTouchStatus = 'start' | 'moving' | 'end'
 
@@ -79,6 +80,21 @@ class P5ToolsManager {
         tool.getToolInfo = getToolInfo || tool.getToolInfo
         this.tools.push(tool)
 
+        return this
+    }
+
+    /**
+     * @description: 删除tool
+     * @param {P5BaseTool} tool
+     * @return {*}
+     */    
+    public removeTool(tool?: P5BaseTool<any>) {
+        if (tool && this._toolsMapping[tool.name]) {
+            delete this._toolsMapping[tool.name]
+            const index = _.indexOf(this.tools, tool)
+            this.tools.splice(index, 1)
+        }
+        
         return this
     }
 

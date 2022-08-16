@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 18:23:16
+ * @LastEditTime: 2022-08-10 23:32:26
  * @Description: file content
  */
 
@@ -10,14 +10,14 @@ import P5BaseTool, { P5ToolAnnotation } from './baseTool'
 import P5 from 'p5'
 import { CursorPoint } from '../utils'
 
-interface CircleToolAnnotation extends P5ToolAnnotation<'SquareTool'> {
+interface SquareToolAnnotation extends P5ToolAnnotation<'SquareTool'> {
 
 }
 
-class SquareTool extends P5BaseTool<CircleToolAnnotation> {
+class SquareTool extends P5BaseTool<SquareToolAnnotation> {
     static toolName = 'SquareTool'
     
-    constructor (annotations?: CircleToolAnnotation[]) {
+    constructor (annotations?: SquareToolAnnotation[]) {
         super('SquareTool', annotations)
     }
 

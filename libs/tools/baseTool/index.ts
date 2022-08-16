@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 22:40:17
+ * @LastEditTime: 2022-08-11 13:05:58
  * @Description: 基础工具
  */
 
@@ -20,14 +20,14 @@ export interface P5ToolOptions {
     textStyle?: THE_STYLE
 }
 
-export interface P5ToolBaseInfo {
+export interface P5ToolBaseInfo<Other = any> {
     title?: string // 标题
     time?: number // 更新时间的时间戳
     remark?: string // 备注
-    others?: any
+    others?: Other
 }
-export interface P5ToolAnnotation<Name = string> {
-    info: P5ToolBaseInfo
+export interface P5ToolAnnotation<Name = string, OtherType = any> {
+    info: P5ToolBaseInfo<OtherType>
     belong: Name // 所属工具
     startPoint?: CursorPoint
     endPoint?: CursorPoint
@@ -37,7 +37,6 @@ export interface P5ToolAnnotation<Name = string> {
     scale: number
     transformedStartPoint: () => CursorPoint | undefined
     transformedEndPoint: () => CursorPoint | undefined
-
     remove: () => void
 }
 
@@ -63,6 +62,8 @@ class P5BaseTool<
     public scale: number = 1
     public translateX: number = 0
     public translateY: number = 0
+
+    public customConfigAnnotation?: (tool: P5BaseTool<any>, anno: AnnotationType) => void
 
     /**
      * @description: 获取文字的回调函数
@@ -137,6 +138,8 @@ class P5BaseTool<
         options?.textSize && sk.textSize(options.textSize * this.scale)
         options?.strokeWeight && sk.strokeWeight(options.strokeWeight * this.scale)
         options?.textStyle && sk.textStyle(options.textStyle)
+
+        this.customConfigAnnotation?.(this, anno)
     }
 
     /**
@@ -259,7 +262,11 @@ class P5BaseTool<
      * @return {*}
      */    
     public touchMoved(sk: P5) {
-        this.editingAnnotation!.endPoint = this.restorePoint([sk.mouseX, sk.mouseY])
+        if (!this.editingAnnotation) {
+            this.touchStarted(sk)
+        } else {
+            this.editingAnnotation!.endPoint = this.restorePoint([sk.mouseX, sk.mouseY])
+        }
     }
 
     /**
@@ -268,6 +275,9 @@ class P5BaseTool<
      * @return {*}
      */    
     public touchEnded(sk: P5) {
+        if (!this.editingAnnotation) {
+            return
+        }
         this.editingAnnotation!.endPoint = this.restorePoint([sk.mouseX, sk.mouseY])
         // 当前编辑的annotation非法，删除此annotation
         if (!this.validateAnnotation(this.editingAnnotation!)) {
@@ -281,6 +291,8 @@ class P5BaseTool<
                 }
             }).catch(e => {
                 console.warn(e)
+            }).finally(() => {
+                this.editingAnnotation = undefined
             })
         }
     }

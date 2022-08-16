@@ -24,7 +24,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "prepublishOnly": "rm -rf src && tsc -p tsconfig.lib.json"
+    "prepublishOnly": "rm -rf src && tsc -p tsconfig.lib.json",
+    "tsc-watch": "tsc -p tsconfig.lib.json --watch"
   },
   "devDependencies": {
     "@types/events": "^3.0.0",
