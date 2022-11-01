@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-08-11 13:05:58
+ * @LastEditTime: 2022-11-01 20:24:47
  * @Description: 基础工具
  */
 
@@ -62,6 +62,9 @@ class P5BaseTool<
     public scale: number = 1
     public translateX: number = 0
     public translateY: number = 0
+
+    /** 加载的图片 */
+    public loadedImage?: P5.Image
 
     public customConfigAnnotation?: (tool: P5BaseTool<any>, anno: AnnotationType) => void
 

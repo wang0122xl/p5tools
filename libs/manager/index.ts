@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-08-11 13:04:06
+ * @LastEditTime: 2022-11-01 20:22:46
  * @Description: file content
  */
 
@@ -15,6 +15,7 @@ import ArrowLineTool from '../tools/arrowLineTool'
 import FreehandTool from '../tools/freehandTool'
 import TextTool from '../tools/textTool'
 import CropTool from '../tools/cropTool'
+import MagnifyTool from '../tools/magnify'
 
 import P5BasePlugin from '../plugins'
 import MovePlugin from '../plugins/move'
@@ -45,6 +46,7 @@ class P5ToolsManager {
     static TextTool = TextTool
     static ArrowLineTool = ArrowLineTool
     static CropTool = CropTool
+    static MagnifyTool = MagnifyTool
 
     static MovePlugin = MovePlugin
     static ScalePlugin = ScalePlugin
