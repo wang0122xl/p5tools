@@ -2,12 +2,13 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-03 18:23:15
+ * @LastEditTime: 2022-11-01 18:21:56
  * @Description: file content
  */
 
 import P5BaseTool, { P5ToolAnnotation } from './baseTool'
 import P5 from 'p5'
+import { distanceBetween } from '../utils'
 
 interface LineToolAnnotation extends P5ToolAnnotation<'LineTool'> {
     
@@ -15,6 +16,7 @@ interface LineToolAnnotation extends P5ToolAnnotation<'LineTool'> {
 
 class LineTool extends P5BaseTool<LineToolAnnotation> {
     static toolName = 'LineTool'
+    public showDistance = false
     
     constructor (annotations?: LineToolAnnotation[]) {
         super('LineTool', annotations)
@@ -37,6 +39,17 @@ class LineTool extends P5BaseTool<LineToolAnnotation> {
                 endPoint[0],
                 endPoint[1]
             )
+            sk.noStroke()
+            sk.textSize(annotation.options.textSize! * this.scale)
+            sk.fill(annotation.options.strokeColor!)
+            
+            if (this.showDistance) {
+                sk.text(
+                    distanceBetween(startPoint, endPoint).toFixed(1),
+                    (endPoint[0] - startPoint[0]) / 2 + (this.options?.strokeWeight || 5) + startPoint[0],
+                    (endPoint[1] - startPoint[1]) / 2 + (this.options?.strokeWeight || 5) + startPoint[1] + annotation.options.textSize!,
+                )
+            }
         }
     }
 }

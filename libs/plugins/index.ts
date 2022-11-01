@@ -2,7 +2,7 @@
  * @Date: 2022-03-01 13:16:30
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-05 17:27:20
+ * @LastEditTime: 2022-11-01 16:42:33
  * @Description: file content
  */
 import P5 from 'p5'
@@ -17,7 +17,7 @@ class P5BasePlugin {
     public tools: P5BaseTool<P5ToolAnnotation>[] = []
     public enabled: boolean = false
     public active: boolean = false
-    private iconUrl: string
+    private iconUrl?: string
     public icon?: P5.Image
     public totalPluginsCount: number = 0
     public pluginIndex: number = 0
@@ -35,7 +35,7 @@ class P5BasePlugin {
     public translateX: number = 0
     public translateY: number = 0
 
-    constructor(imageUrl: string) {
+    constructor(imageUrl?: string) {
         this.iconUrl = imageUrl
         eventBus.on(EMITTER_PLUGIN_ACTIVED, (t: string) => {
             if (t !== this.name) {
@@ -45,9 +45,11 @@ class P5BasePlugin {
     }
 
     public preload(sk: P5) {
-        sk.loadImage(this.iconUrl, img => {
-            this.icon = img
-        })
+        if (this.iconUrl) {
+            sk.loadImage(this.iconUrl, img => {
+                this.icon = img
+            })
+        }
     }
 
     /**
