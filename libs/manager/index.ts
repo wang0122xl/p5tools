@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-01 20:22:46
+ * @LastEditTime: 2022-11-01 22:07:42
  * @Description: file content
  */
 
@@ -24,6 +24,7 @@ import ScalePlugin from '../plugins/scale'
 
 import type { P5ToolOptions } from '../tools/baseTool'
 import _ from 'lodash'
+import AngleTool from '../tools/angle'
 
 type SKTouchStatus = 'start' | 'moving' | 'end'
 
@@ -45,6 +46,7 @@ class P5ToolsManager {
     static FreehandTool = FreehandTool
     static TextTool = TextTool
     static ArrowLineTool = ArrowLineTool
+    static AngleTool = AngleTool
     static CropTool = CropTool
     static MagnifyTool = MagnifyTool
 
@@ -186,7 +188,9 @@ class P5ToolsManager {
      * @return {*}
      */    
     public mouseMoved(sk: P5) {
-        
+        for (const tool of this.tools) {
+            tool.mouseMoved(sk)
+        }
     }
 
     /**
