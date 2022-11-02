@@ -2,13 +2,13 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-01 22:28:05
+ * @LastEditTime: 2022-11-02 14:09:24
  * @Description: 放大镜🔍
  */
 
 import P5BaseTool, { P5ToolAnnotation } from './baseTool/index'
 import P5 from 'p5'
-import { CursorPoint, distanceBetween } from '../utils/index'
+import { calculateAngle, CursorPoint, distanceBetween } from '../utils/index'
 
 interface AngleToolAnnotation extends P5ToolAnnotation<'AngleTool'> {
     points: [CursorPoint, CursorPoint?, CursorPoint?]
@@ -16,6 +16,7 @@ interface AngleToolAnnotation extends P5ToolAnnotation<'AngleTool'> {
 
 class AngleTool extends P5BaseTool<AngleToolAnnotation> {
     static toolName = 'AngleTool'
+    public showAngle = false
 
     constructor(annotations?: AngleToolAnnotation[]) {
         super('AngleTool', annotations)
@@ -26,8 +27,8 @@ class AngleTool extends P5BaseTool<AngleToolAnnotation> {
             return undefined
         }
         return [
-            this.transformValue(point[0] + this.translateX) + anno.translateX,
-            this.transformValue(point[1] + this.translateY) + anno.translateY,
+            this.transformValue(point[0] + anno.translateX) + this.translateX,
+            this.transformValue(point[1] + anno.translateY) + this.translateY,
         ]
     }
 
@@ -99,6 +100,20 @@ class AngleTool extends P5BaseTool<AngleToolAnnotation> {
                     transformed3[0],
                     transformed3[1]
                 )
+            }
+
+            if (transformed1 && transformed2 && transformed3 && this.showAngle) {
+                sk.textSize((anno.options.textSize || 14) * this.scale)
+                sk.fill(anno.options.strokeColor!)
+                const angle = calculateAngle(transformed1, transformed2, transformed3)
+                const offset = (transformed1[0] > transformed2[0] ? -30 : 10) * this.scale
+                if (this.showAngle) {
+                    sk.text(
+                        angle,
+                        transformed2[0] + offset,
+                        transformed2[1] + (anno.options.textSize || 15) * this.scale / 3
+                    )
+                }
             }
         }
     }

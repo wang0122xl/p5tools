@@ -2,7 +2,7 @@
  * @Date: 2022-02-25 17:53:30
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 21:45:32
+ * @LastEditTime: 2022-11-02 13:46:53
  * @Description: file content
  */
 
@@ -26,6 +26,27 @@ function degreeBetween(start: CursorPoint, end: CursorPoint, mode?: 'RADIANS' | 
     return angle
 }
 
+/**
+ * @description: 根据三点计算夹角
+ * @param {CursorPoint} 起始点
+ * @param {CursorPoint} 夹角点
+ * @param {CursorPoint} 终止点
+ * @return {*}
+ */
+function calculateAngle(start: CursorPoint, center: CursorPoint, end: CursorPoint) {
+    
+        var a = Math.sqrt(Math.pow(start[0] - center[0], 2) + Math.pow(start[1] - center[1], 2));
+        var b = Math.sqrt(Math.pow(end[0] - center[0], 2) + Math.pow(end[1] - center[1], 2));
+        var c = Math.sqrt(Math.pow(end[0] - start[0], 2) + Math.pow(end[1] - start[1], 2));
+        var cosA = (
+            Math.pow(a, 2) + Math.pow(b, 2) - Math.pow(c, 2)
+        ) / (
+            2 * a * b
+        )
+        const angle = Math.round( Math.acos(cosA) * 180 / Math.PI )
+        return angle
+}
+
 function promisifyToBlob(canvas: HTMLCanvasElement, type?: string, quality?: number): Promise<Blob | null> {
     return new Promise(resolve => {
         canvas.toBlob(blob => {
@@ -37,5 +58,6 @@ function promisifyToBlob(canvas: HTMLCanvasElement, type?: string, quality?: num
 export {
     distanceBetween,
     degreeBetween,
-    promisifyToBlob
+    promisifyToBlob,
+    calculateAngle
 }
