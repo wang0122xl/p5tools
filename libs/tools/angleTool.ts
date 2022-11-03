@@ -2,13 +2,13 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-02 14:09:24
- * @Description: 放大镜🔍
+ * @LastEditTime: 2022-11-03 10:24:20
+ * @Description: 角度
  */
 
 import P5BaseTool, { P5ToolAnnotation } from './baseTool/index'
 import P5 from 'p5'
-import { calculateAngle, CursorPoint, distanceBetween } from '../utils/index'
+import { calculateAngle, CursorPoint } from '../utils/index'
 
 interface AngleToolAnnotation extends P5ToolAnnotation<'AngleTool'> {
     points: [CursorPoint, CursorPoint?, CursorPoint?]
@@ -27,8 +27,8 @@ class AngleTool extends P5BaseTool<AngleToolAnnotation> {
             return undefined
         }
         return [
-            this.transformValue(point[0] + anno.translateX) + this.translateX,
-            this.transformValue(point[1] + anno.translateY) + this.translateY,
+            this.transformValue(point[0] + anno.translateX) + this.manager.translate[0],
+            this.transformValue(point[1] + anno.translateY) + this.manager.translate[1],
         ]
     }
 
@@ -73,6 +73,14 @@ class AngleTool extends P5BaseTool<AngleToolAnnotation> {
         }
     }
 
+    public turnToDisabled(): void {
+        super.turnToDisabled()
+        if (this.editingAnnotation) {
+            this.editingAnnotation = undefined
+            this.annotations.splice(this.annotations.length - 1, 1)
+        }
+    }
+
     public draw(sk: P5): void {
         for (const anno of this.annotations) {
             const [point1, point2, point3] = anno.points
@@ -109,7 +117,7 @@ class AngleTool extends P5BaseTool<AngleToolAnnotation> {
                 const offset = (transformed1[0] > transformed2[0] ? -30 : 10) * this.scale
                 if (this.showAngle) {
                     sk.text(
-                        angle,
+                        angle + '°',
                         transformed2[0] + offset,
                         transformed2[1] + (anno.options.textSize || 15) * this.scale / 3
                     )

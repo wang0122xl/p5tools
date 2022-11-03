@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-01 22:07:42
+ * @LastEditTime: 2022-11-03 09:24:07
  * @Description: file content
  */
 
@@ -15,7 +15,7 @@ import ArrowLineTool from '../tools/arrowLineTool'
 import FreehandTool from '../tools/freehandTool'
 import TextTool from '../tools/textTool'
 import CropTool from '../tools/cropTool'
-import MagnifyTool from '../tools/magnify'
+import MagnifyTool from '../tools/magnifyTool'
 
 import P5BasePlugin from '../plugins'
 import MovePlugin from '../plugins/move'
@@ -24,7 +24,10 @@ import ScalePlugin from '../plugins/scale'
 
 import type { P5ToolOptions } from '../tools/baseTool'
 import _ from 'lodash'
-import AngleTool from '../tools/angle'
+import AngleTool from '../tools/angleTool'
+import RotateTool from '../tools/rotateTool'
+import MoveTool from '../tools/moveTool'
+import { CursorPoint } from 'libs/utils'
 
 type SKTouchStatus = 'start' | 'moving' | 'end'
 
@@ -36,6 +39,8 @@ class P5ToolsManager {
 
     public touchStatus: SKTouchStatus = 'end'
     public hasEnabledToolCallback?: (has: boolean) => void
+
+    public translate: CursorPoint = [0, 0]
     
     /** 当前正在使用的工具 */
     private _enabledTool?: P5BaseTool<any>
@@ -49,6 +54,8 @@ class P5ToolsManager {
     static AngleTool = AngleTool
     static CropTool = CropTool
     static MagnifyTool = MagnifyTool
+    static RotateTool = RotateTool
+    static MoveTool = MoveTool
 
     static MovePlugin = MovePlugin
     static ScalePlugin = ScalePlugin
@@ -59,6 +66,8 @@ class P5ToolsManager {
     }
 
     set enabledTool (tool: P5BaseTool<any> | undefined) {
+        this._enabledTool?.turnToDisabled()
+        tool && console.info(`enabled: ${tool.name}`)
         this._enabledTool = tool
         this.hasEnabledToolCallback?.(!!tool)
         for (const plugin of this.plugins) {
@@ -82,6 +91,7 @@ class P5ToolsManager {
         }
         this._toolsMapping[tool.name] = tool
         tool.getToolInfo = getToolInfo || tool.getToolInfo
+        tool.manager = this
         this.tools.push(tool)
 
         return this
@@ -163,21 +173,15 @@ class P5ToolsManager {
      * @description: p5 draw
      * @param {P5} sk
      * @param {number} scale 坐标转换的scale值
-     * @param {number} translateX
-     * @param {number} translateY
      * @return {*}
      */    
-    public draw(sk: P5, scale?: number, translateX?: number, translateY?: number) {
+    public draw(sk: P5, scale?: number) {
         for (const tool of this.tools) {
             tool.scale = scale || 1
-            tool.translateX = translateX || 0
-            tool.translateY = translateY || 0
             tool.draw(sk)
         }
         for (const plugin of this.plugins) {
             plugin.scale = scale || 1
-            plugin.translateX = translateX || 0
-            plugin.translateY = translateY || 0
             plugin.draw(sk)
         }
     }

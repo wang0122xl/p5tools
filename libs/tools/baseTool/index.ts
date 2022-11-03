@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-01 20:24:47
+ * @LastEditTime: 2022-11-03 10:24:01
  * @Description: 基础工具
  */
 
@@ -10,6 +10,7 @@ import P5, { THE_STYLE } from 'p5'
 import { distanceBetween } from '../../utils/index'
 import type { CursorPoint } from '../../utils/index'
 import emitter, { EMITTER_ANNOTATION_INFO_UPDATED } from "../../utils/emitter"
+import P5ToolsManager from 'libs/manager'
 
 export interface P5ToolOptions {
     strokeWeight?: number
@@ -48,6 +49,8 @@ class P5BaseTool<
 > {
     static readonly toolName: string
 
+    public manager!: P5ToolsManager
+
     public annotations: AnnotationType[] = []
     public name: AnnotationType['belong']
     public editingAnnotation?: AnnotationType
@@ -60,8 +63,6 @@ class P5BaseTool<
     public state: ToolState
 
     public scale: number = 1
-    public translateX: number = 0
-    public translateY: number = 0
 
     /** 加载的图片 */
     public loadedImage?: P5.Image
@@ -89,6 +90,14 @@ class P5BaseTool<
         this.state = (initialState || {}) as ToolState
     }
 
+    /**
+     * @description: tool从enabled状态退出时调用
+     * @return {*}
+     */    
+    public turnToDisabled () {
+        console.info(`disabled: ${this.name}`)
+    }
+
     public transformValue = (v: number) => {
         return v * this.scale
     }
@@ -100,8 +109,8 @@ class P5BaseTool<
      */    
     public transformPoint = (point: CursorPoint) => {
         return [
-            this.transformValue(point[0]) + this.translateX,
-            this.transformValue(point[1]) + this.translateY
+            this.transformValue(point[0]) + this.manager.translate[0],
+            this.transformValue(point[1]) + this.manager.translate[1]
         ] as CursorPoint
     }
 
@@ -112,8 +121,8 @@ class P5BaseTool<
      */    
     public restorePoint = (point: CursorPoint) => {
         return [
-            (point[0] - this.translateX) / this.scale,
-            (point[1] - this.translateY) / this.scale
+            (point[0] - this.manager.translate[0]) / this.scale,
+            (point[1] - this.manager.translate[1]) / this.scale
         ] as CursorPoint
     }
 
@@ -181,8 +190,8 @@ class P5BaseTool<
                     return undefined
                 }
                 return [
-                    self.transformValue(this.startPoint[0] + this.translateX) + self.translateX,
-                    self.transformValue(this.startPoint[1] + this.translateY) + self.translateY
+                    self.transformValue(this.startPoint[0] + this.translateX) + self.manager.translate[0],
+                    self.transformValue(this.startPoint[1] + this.translateY) + self.manager.translate[1]
                 ] as CursorPoint
             },
             transformedEndPoint: function () {
@@ -190,8 +199,8 @@ class P5BaseTool<
                     return undefined
                 }
                 return [
-                    self.transformValue(this.endPoint[0] + this.translateX) + self.translateX,
-                    self.transformValue(this.endPoint[1] + this.translateY) + self.translateY
+                    self.transformValue(this.endPoint[0] + this.translateX) + self.manager.translate[0],
+                    self.transformValue(this.endPoint[1] + this.translateY) + self.manager.translate[1]
                 ] as CursorPoint
             }
         }

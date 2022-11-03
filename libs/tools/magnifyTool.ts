@@ -2,13 +2,12 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-01 20:49:04
+ * @LastEditTime: 2022-11-03 09:06:32
  * @Description: 放大镜🔍
  */
 
-import P5BaseTool, { P5ToolAnnotation } from './baseTool/index'
+import P5BaseTool from './baseTool/index'
 import P5 from 'p5'
-import { CursorPoint, distanceBetween } from '../utils/index'
 
 class MagnifyTool extends P5BaseTool<any> {
     static toolName = 'MagnifyTool'
