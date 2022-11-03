@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-08-10 23:32:26
+ * @LastEditTime: 2022-11-03 11:04:23
  * @Description: file content
  */
 
@@ -32,8 +32,8 @@ class SquareTool extends P5BaseTool<SquareToolAnnotation> {
         const yParams = [startPoint[1], endPoint[1]]
 
         return [
-            Math.max(...xParams) + (annotation.options.strokeWeight || 1) * this.scale,
-            Math.max(...yParams) - this.pluginItemWH + (annotation.options.strokeWeight || 1) * this.scale / 2
+            Math.max(...xParams) + (annotation.options.strokeWeight || 1) * this.manager.scale,
+            Math.max(...yParams) - this.pluginItemWH + (annotation.options.strokeWeight || 1) * this.manager.scale / 2
         ]
     }
 

@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-03 10:24:01
+ * @LastEditTime: 2022-11-03 11:03:02
  * @Description: 基础工具
  */
 
@@ -62,8 +62,6 @@ class P5BaseTool<
 
     public state: ToolState
 
-    public scale: number = 1
-
     /** 加载的图片 */
     public loadedImage?: P5.Image
 
@@ -99,7 +97,7 @@ class P5BaseTool<
     }
 
     public transformValue = (v: number) => {
-        return v * this.scale
+        return v * this.manager.scale
     }
 
     /**
@@ -121,8 +119,8 @@ class P5BaseTool<
      */    
     public restorePoint = (point: CursorPoint) => {
         return [
-            (point[0] - this.manager.translate[0]) / this.scale,
-            (point[1] - this.manager.translate[1]) / this.scale
+            (point[0] - this.manager.translate[0]) / this.manager.scale,
+            (point[1] - this.manager.translate[1]) / this.manager.scale
         ] as CursorPoint
     }
 
@@ -147,8 +145,8 @@ class P5BaseTool<
         } else {
             sk.noFill()
         }
-        options?.textSize && sk.textSize(options.textSize * this.scale)
-        options?.strokeWeight && sk.strokeWeight(options.strokeWeight * this.scale)
+        options?.textSize && sk.textSize(options.textSize * this.manager.scale)
+        options?.strokeWeight && sk.strokeWeight(options.strokeWeight * this.manager.scale)
         options?.textStyle && sk.textStyle(options.textStyle)
 
         this.customConfigAnnotation?.(this, anno)

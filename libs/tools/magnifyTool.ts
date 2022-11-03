@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-03 09:06:32
+ * @LastEditTime: 2022-11-03 11:04:05
  * @Description: 放大镜🔍
  */
 
@@ -24,7 +24,7 @@ class MagnifyTool extends P5BaseTool<any> {
             const point = this.editingAnnotation.endPoint || this.editingAnnotation.startPoint
             const transformedPoint = this.editingAnnotation.transformedEndPoint() || this.editingAnnotation.transformedStartPoint()
             const radio = this.areaWidth / 2
-            const finalScale = this.scale * this.zoomScale
+            const finalScale = this.manager.scale * this.zoomScale
             const finalRadio = this.areaWidth * finalScale / 2
             const areaImg = this.loadedImage.get(point[0] - radio, point[1] - radio, this.areaWidth, this.areaWidth)
             sk.image(

@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-01 20:27:35
+ * @LastEditTime: 2022-11-03 11:03:45
  * @Description: file content
  */
 
@@ -183,8 +183,8 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         let startY: number = startPoint![1]
         let endX: number = endPoint![0]
         let endY: number = endPoint![1]
-        const transformX = (sk.mouseX - this.touchStartPoint[0]) / this.scale
-        const transformY = (sk.mouseY - this.touchStartPoint[1]) / this.scale
+        const transformX = (sk.mouseX - this.touchStartPoint[0]) / this.manager.scale
+        const transformY = (sk.mouseY - this.touchStartPoint[1]) / this.manager.scale
 
         switch (this.cursorPosition) {
             case 'in-rect':

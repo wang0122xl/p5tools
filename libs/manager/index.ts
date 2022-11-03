@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-03 09:24:07
+ * @LastEditTime: 2022-11-03 11:06:46
  * @Description: file content
  */
 
@@ -28,6 +28,7 @@ import AngleTool from '../tools/angleTool'
 import RotateTool from '../tools/rotateTool'
 import MoveTool from '../tools/moveTool'
 import { CursorPoint } from 'libs/utils'
+import ScaleTool from '../tools/scaleTool'
 
 type SKTouchStatus = 'start' | 'moving' | 'end'
 
@@ -40,7 +41,10 @@ class P5ToolsManager {
     public touchStatus: SKTouchStatus = 'end'
     public hasEnabledToolCallback?: (has: boolean) => void
 
+    /** 偏移量 */
     public translate: CursorPoint = [0, 0]
+    /** 缩放 */
+    public scale: number = 1
     
     /** 当前正在使用的工具 */
     private _enabledTool?: P5BaseTool<any>
@@ -56,6 +60,7 @@ class P5ToolsManager {
     static MagnifyTool = MagnifyTool
     static RotateTool = RotateTool
     static MoveTool = MoveTool
+    static ScaleTool = ScaleTool
 
     static MovePlugin = MovePlugin
     static ScalePlugin = ScalePlugin
@@ -172,16 +177,13 @@ class P5ToolsManager {
     /**
      * @description: p5 draw
      * @param {P5} sk
-     * @param {number} scale 坐标转换的scale值
      * @return {*}
      */    
-    public draw(sk: P5, scale?: number) {
+    public draw(sk: P5) {
         for (const tool of this.tools) {
-            tool.scale = scale || 1
             tool.draw(sk)
         }
         for (const plugin of this.plugins) {
-            plugin.scale = scale || 1
             plugin.draw(sk)
         }
     }

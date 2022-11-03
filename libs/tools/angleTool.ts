@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-03 10:24:20
+ * @LastEditTime: 2022-11-03 11:03:30
  * @Description: 角度
  */
 
@@ -111,15 +111,15 @@ class AngleTool extends P5BaseTool<AngleToolAnnotation> {
             }
 
             if (transformed1 && transformed2 && transformed3 && this.showAngle) {
-                sk.textSize((anno.options.textSize || 14) * this.scale)
+                sk.textSize((anno.options.textSize || 14) * this.manager.scale)
                 sk.fill(anno.options.strokeColor!)
                 const angle = calculateAngle(transformed1, transformed2, transformed3)
-                const offset = (transformed1[0] > transformed2[0] ? -30 : 10) * this.scale
+                const offset = (transformed1[0] > transformed2[0] ? -30 : 10) * this.manager.scale
                 if (this.showAngle) {
                     sk.text(
                         angle + '°',
                         transformed2[0] + offset,
-                        transformed2[1] + (anno.options.textSize || 15) * this.scale / 3
+                        transformed2[1] + (anno.options.textSize || 15) * this.manager.scale / 3
                     )
                 }
             }
