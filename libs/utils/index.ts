@@ -2,9 +2,10 @@
  * @Date: 2022-02-25 17:53:30
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-02 13:46:53
+ * @LastEditTime: 2022-11-03 13:12:24
  * @Description: file content
  */
+import P5 from 'p5'
 
 export type CursorPoint = [x: number, y: number]
 

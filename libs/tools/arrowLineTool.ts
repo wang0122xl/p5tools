@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 22:41:20
+ * @LastEditTime: 2022-11-03 17:32:39
  * @Description: file content
  */
 
@@ -40,12 +40,12 @@ class ArrowLineTool extends P5BaseTool<ArrowLineToolAnnotation> {
             const radio = degreeBetween(startPoint, endPoint, 'DEGREES')
             const ratio = (annotation.options?.strokeWeight || 1) * 8
             const arrowPoint1 = [
-                startPoint[0] + ratio * sk.cos(radio - 145) * this.scale,
-                startPoint[1] + ratio * sk.sin(radio - 145) * this.scale
+                startPoint[0] + ratio * sk.cos(radio - 145) * this.manager.scale,
+                startPoint[1] + ratio * sk.sin(radio - 145) * this.manager.scale
             ]
             const arrowPoint2 = [
-                startPoint[0] + ratio * sk.cos(radio + 145) * this.scale,
-                startPoint[1] + ratio * sk.sin(radio + 145) * this.scale
+                startPoint[0] + ratio * sk.cos(radio + 145) * this.manager.scale,
+                startPoint[1] + ratio * sk.sin(radio + 145) * this.manager.scale
             ] 
             
             super.configAnnotation(sk, annotation)
@@ -69,7 +69,7 @@ class ArrowLineTool extends P5BaseTool<ArrowLineToolAnnotation> {
                 arrowPoint2[1]
             )
             sk.noStroke()
-            sk.textSize(annotation.options.textSize! * this.scale)
+            sk.textSize(annotation.options.textSize! * this.manager.scale)
             sk.fill(annotation.options.strokeColor!)
             sk.text(
                 annotation.info.title || '',

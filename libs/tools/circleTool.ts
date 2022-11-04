@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-05 13:52:27
+ * @LastEditTime: 2022-11-03 15:34:23
  * @Description: file content
  */
 
@@ -27,7 +27,7 @@ class CircleTool extends P5BaseTool<CircleToolAnnotation> {
         if (startPoint && endPoint) {
             const distance = distanceBetween(startPoint, endPoint)
             return [
-                startPoint[0] + distance + (annotation.options.strokeWeight || 1) * this.scale / 2,
+                startPoint[0] + distance + (annotation.options.strokeWeight || 1) * this.manager.scale / 2,
                 startPoint[1] - this.pluginItemWH / 2
             ]
         }

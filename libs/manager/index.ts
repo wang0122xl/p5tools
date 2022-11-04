@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-03 11:06:46
+ * @LastEditTime: 2022-11-03 17:31:00
  * @Description: file content
  */
 
@@ -45,6 +45,8 @@ class P5ToolsManager {
     public translate: CursorPoint = [0, 0]
     /** 缩放 */
     public scale: number = 1
+    /** 旋转角度 */
+    public rotation: number = 0
     
     /** 当前正在使用的工具 */
     private _enabledTool?: P5BaseTool<any>
@@ -155,6 +157,8 @@ class P5ToolsManager {
      * @return {*}
      */    
     public setup(sk: P5) {
+        sk.imageMode('center')
+        sk.angleMode('degrees')
         for (const tool of this.tools) {
             tool.setup(sk)
         }
