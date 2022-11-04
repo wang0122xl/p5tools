@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-03 17:24:22
+ * @LastEditTime: 2022-11-04 13:14:20
  * @Description: 基础工具
  */
 
@@ -10,7 +10,7 @@ import P5, { THE_STYLE } from 'p5'
 import { distanceBetween } from '../../utils/index'
 import type { CursorPoint } from '../../utils/index'
 import emitter, { EMITTER_ANNOTATION_INFO_UPDATED } from "../../utils/emitter"
-import P5ToolsManager from 'libs/manager'
+import P5ToolsManager from '../../manager'
 
 export interface P5ToolOptions {
     strokeWeight?: number
