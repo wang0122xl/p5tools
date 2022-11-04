@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-03 17:31:00
+ * @LastEditTime: 2022-11-04 13:15:27
  * @Description: file content
  */
 
@@ -27,7 +27,7 @@ import _ from 'lodash'
 import AngleTool from '../tools/angleTool'
 import RotateTool from '../tools/rotateTool'
 import MoveTool from '../tools/moveTool'
-import { CursorPoint } from 'libs/utils'
+import { CursorPoint } from '../utils'
 import ScaleTool from '../tools/scaleTool'
 
 type SKTouchStatus = 'start' | 'moving' | 'end'
