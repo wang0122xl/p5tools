@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-03 11:03:45
+ * @LastEditTime: 2022-11-04 13:10:02
  * @Description: file content
  */
 
@@ -110,6 +110,7 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
     public async pureCrop(sk: P5, startPoint: CursorPoint, endPoint: CursorPoint, type?: string) {
         const [startX, startY] = startPoint
         const [endX, endY] = endPoint
+        sk.imageMode('corner')
         const prevImage = sk.get()
         sk.noLoop();
         (sk as any).clear()
