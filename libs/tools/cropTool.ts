@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-09 17:14:27
+ * @LastEditTime: 2022-11-09 17:21:47
  * @Description: file content
  */
 
@@ -82,6 +82,7 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
         }
 
         super.configAnnotation(sk, this.editingAnnotation)
+        sk.strokeWeight(1)
 
         sk.fill(255, 255, 255, 90)
         sk.drawingContext.setLineDash([10, 8])
