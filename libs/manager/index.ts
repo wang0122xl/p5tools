@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-04 13:15:27
+ * @LastEditTime: 2022-11-10 10:47:42
  * @Description: file content
  */
 
@@ -35,11 +35,15 @@ type SKTouchStatus = 'start' | 'moving' | 'end'
 class P5ToolsManager {
     private tools: P5BaseTool<any>[] = []
     private plugins: P5BasePlugin[] = []
-    /** mapping结构的tools，方便取值 */ 
+    /** mapping结构的tools，方便取值 */
     private _toolsMapping: Record<string, P5BaseTool<any>> = {}
 
     public touchStatus: SKTouchStatus = 'end'
     public hasEnabledToolCallback?: (has: boolean) => void
+
+    public loadedImage?: P5.Image
+
+    public sketch?: P5
 
     /** 偏移量 */
     public translate: CursorPoint = [0, 0]
@@ -47,7 +51,11 @@ class P5ToolsManager {
     public scale: number = 1
     /** 旋转角度 */
     public rotation: number = 0
-    
+    /** 水平方向翻转 */
+    public hflip: boolean = false
+    /** 处置方向翻转 */
+    public vflip: boolean = false
+
     /** 当前正在使用的工具 */
     private _enabledTool?: P5BaseTool<any>
 
@@ -67,12 +75,12 @@ class P5ToolsManager {
     static MovePlugin = MovePlugin
     static ScalePlugin = ScalePlugin
 
-    constructor () {
+    constructor() {
         this.tools = []
         this._toolsMapping = {}
     }
 
-    set enabledTool (tool: P5BaseTool<any> | undefined) {
+    set enabledTool(tool: P5BaseTool<any> | undefined) {
         this._enabledTool?.turnToDisabled()
         tool && console.info(`enabled: ${tool.name}`)
         this._enabledTool = tool
@@ -81,7 +89,7 @@ class P5ToolsManager {
             plugin.enabled = !tool
         }
     }
-    get enabledTool () {
+    get enabledTool() {
         return this._enabledTool
     }
 
@@ -89,7 +97,7 @@ class P5ToolsManager {
      * @description: 添加tool
      * @param {P5BaseTool} tool
      * @return {*}
-     */    
+     */
     public useTool(tool: P5BaseTool<any>, getToolInfo?: P5ToolGetInfo) {
         const included = !!this.findTool(tool.name)
         if (included) {
@@ -108,14 +116,14 @@ class P5ToolsManager {
      * @description: 删除tool
      * @param {P5BaseTool} tool
      * @return {*}
-     */    
+     */
     public removeTool(tool?: P5BaseTool<any>) {
         if (tool && this._toolsMapping[tool.name]) {
             delete this._toolsMapping[tool.name]
             const index = _.indexOf(this.tools, tool)
             this.tools.splice(index, 1)
         }
-        
+
         return this
     }
 
@@ -124,22 +132,22 @@ class P5ToolsManager {
      * @param {P5BasePlugin} plugin
      * @param {P5BaseTool} controlTools
      * @return {*}
-     */    
-     public usePlugin(plugin: P5BasePlugin, controlTools: P5BaseTool<any>[]) {
-         let flag = false
-         for (const plug of this.plugins) {
-             if (plugin.name === plug.name) {
-                 flag = true
-                 break
-             }
-         }
+     */
+    public usePlugin(plugin: P5BasePlugin, controlTools: P5BaseTool<any>[]) {
+        let flag = false
+        for (const plug of this.plugins) {
+            if (plugin.name === plug.name) {
+                flag = true
+                break
+            }
+        }
         if (flag) {
             console.error('%s已存在, 请勿重复添加', plugin.name)
         } else {
             plugin.tools = controlTools
             this.plugins.push(plugin)
         }
-        for (let i = 0; i < this.plugins.length; i ++) {
+        for (let i = 0; i < this.plugins.length; i++) {
             const plugin = this.plugins[i]
             plugin.totalPluginsCount = this.plugins.length
             plugin.pluginIndex = i
@@ -147,7 +155,7 @@ class P5ToolsManager {
         for (const tool of this.tools) {
             tool.pluginsCount = this.plugins.length
         }
-        
+
         return this
     }
 
@@ -155,8 +163,9 @@ class P5ToolsManager {
      * @description: p5 setup
      * @param {P5} sk
      * @return {*}
-     */    
+     */
     public setup(sk: P5) {
+        this.sketch = sk
         sk.imageMode('center')
         sk.angleMode('degrees')
         for (const tool of this.tools) {
@@ -168,8 +177,9 @@ class P5ToolsManager {
      * @description: p5 preload
      * @param {P5} sk
      * @return {*}
-     */    
+     */
     public preload(sk: P5) {
+        this.sketch = sk
         for (const tool of this.tools) {
             tool.preload(sk)
         }
@@ -182,8 +192,31 @@ class P5ToolsManager {
      * @description: p5 draw
      * @param {P5} sk
      * @return {*}
-     */    
+     */
     public draw(sk: P5) {
+        this.sketch = sk
+        if (this.hflip) {
+            sk.scale(-1, 1, 1)
+            sk.translate(-sk.width + (sk.width / 2 - this.translate[0]) * 2, 0)
+        }
+        if (this.vflip) {
+            sk.scale(1, -1, 1)
+            sk.translate(0, -sk.height + (sk.height / 2 - this.translate[1]) * 2)
+        }
+        if (this.loadedImage) {
+            sk.imageMode('center')
+            sk.translate(this.translate[0], this.translate[1])
+            sk.rotate(this.rotation)
+            sk.image(
+                this.loadedImage,
+                0,
+                0,
+                this.loadedImage.width * this.scale,
+                this.loadedImage.height * this.scale
+            )
+            sk.translate(-this.translate[0], -this.translate[1])
+        }
+
         for (const tool of this.tools) {
             tool.draw(sk)
         }
@@ -196,8 +229,9 @@ class P5ToolsManager {
      * @description: p5 mouseMoved
      * @param {P5} sk
      * @return {*}
-     */    
+     */
     public mouseMoved(sk: P5) {
+        this.sketch = sk
         for (const tool of this.tools) {
             tool.mouseMoved(sk)
         }
@@ -208,8 +242,9 @@ class P5ToolsManager {
      * @param {P5} sk
      * @param {any} event
      * @return {*}
-     */    
+     */
     public touchStarted(sk: P5) {
+        this.sketch = sk
         this.touchStatus = 'start'
         this.enabledTool?.touchStarted(sk)
         for (const plugin of this.plugins) {
@@ -221,8 +256,9 @@ class P5ToolsManager {
      * @description: p5 touchMoved
      * @param {P5} sk
      * @return {*}
-     */    
+     */
     public touchMoved(sk: P5) {
+        this.sketch = sk
         this.touchStatus = 'moving'
         this.enabledTool?.touchMoved(sk)
         for (const plugin of this.plugins) {
@@ -236,8 +272,9 @@ class P5ToolsManager {
      * @description: p5 touchEnd
      * @param {P5} sk
      * @return {*}
-     */    
+     */
     public touchEnded(sk: P5) {
+        this.sketch = sk
         this.touchStatus = 'end'
         this.enabledTool?.touchEnded(sk)
         for (const plugin of this.plugins) {
@@ -251,7 +288,7 @@ class P5ToolsManager {
      * @description: 根据名字获取对应工具
      * @param {string} name
      * @return {*}
-     */    
+     */
     public findTool(name: string) {
         return this._toolsMapping[name]
     }
@@ -261,7 +298,7 @@ class P5ToolsManager {
      * @param {string} name
      * @param {any} initialState
      * @return {*}
-     */     
+     */
     public setToolEnabled(name: string, options?: P5ToolOptions) {
         const tool = this.findTool(name)
         if (!tool) {
@@ -276,7 +313,7 @@ class P5ToolsManager {
      * @description: 退出工具的使用
      * @param {*}
      * @return {*}
-     */    
+     */
     public quitTool() {
         this.enabledTool = undefined
     }
@@ -285,7 +322,7 @@ class P5ToolsManager {
      * @description: 获取所有标注
      * @param {*}
      * @return {*}
-     */    
+     */
     public getAllAnnotations() {
         let annotations: P5ToolAnnotation[] = []
         for (const tool of this.tools) {
@@ -295,7 +332,7 @@ class P5ToolsManager {
         }
         return annotations
     }
-    
+
 }
 
 export default P5ToolsManager

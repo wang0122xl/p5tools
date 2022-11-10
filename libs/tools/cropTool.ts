@@ -19,8 +19,6 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
 }> {
     static toolName = 'CropTool'
 
-    private pg?: P5
-
     public handleCroppedImage?: (blob: Blob | null) => Promise<void>
 
     constructor(annotations?: CropToolAnnotation[]) {
