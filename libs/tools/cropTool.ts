@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-09 17:21:47
+ * @LastEditTime: 2022-11-10 16:21:52
  * @Description: file content
  */
 
@@ -40,16 +40,23 @@ class CropTool extends P5BaseTool<CropToolAnnotation, {
     }
 
     public async pureCrop(sk: P5, startPoint: CursorPoint, endPoint: CursorPoint, type?: string) {
-        const {
-            startX,
-            startY,
-            endX,
-            endY
-        } = this.sortPoints(startPoint, endPoint)
+        const [translateX, translateY] = this.manager.translate
+        const tempStartPoint = startPoint
+        const tempEndPoint = endPoint
+        if (this.manager.hflip) {
+            tempStartPoint[0] += (translateX - startPoint[0]) * 2
+            tempEndPoint[0] += (translateX - endPoint[0]) * 2
+        }
+        if (this.manager.vflip) {
+            tempStartPoint[1] += (translateY - startPoint[1]) * 2
+            tempEndPoint[1] += (translateY - endPoint[1]) * 2
+        }
+
+        const rect = this.sortPoints(tempStartPoint, tempEndPoint)
         sk.imageMode('corner')
         return new Promise<Blob | null>(resolve => {
             requestAnimationFrame(() => {
-                const cropCanvas = ((sk.get(startX, startY, endX - startX, endY - startY) as any).canvas) as HTMLCanvasElement
+                const cropCanvas = ((sk.get(rect.startX, rect.startY, rect.endX - rect.startX, rect.endY - rect.startY) as any).canvas) as HTMLCanvasElement
 
                 promisifyToBlob(cropCanvas, type).then(b => resolve(b))
             })

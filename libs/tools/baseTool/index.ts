@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-10 10:58:16
+ * @LastEditTime: 2022-11-10 11:50:06
  * @Description: 基础工具
  */
 
@@ -318,6 +318,20 @@ class P5BaseTool<
             }).finally(() => {
                 this.editingAnnotation = undefined
             })
+        }
+    }
+
+    /**
+     * @description: 翻转后，重置文字方向
+     * @return {*}
+     */    
+    public resetTextTransform(sk: P5, point: CursorPoint) {
+        sk.resetMatrix()
+        if (this.manager.hflip) {
+            sk.translate(-point[0] * 2 * this.manager.scale, 0)
+        }
+        if (this.manager.vflip) {
+            sk.translate(0, -point[1] * 2 * this.manager.scale)
         }
     }
 

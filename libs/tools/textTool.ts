@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 22:40:00
+ * @LastEditTime: 2022-11-10 13:58:56
  * @Description: file content
  */
 
@@ -83,7 +83,6 @@ class TextTool extends P5BaseTool<TextToolAnnotation> {
                 return
             }
 
-
             super.configAnnotation(sk, annotation)
             sk.noStroke()
 
@@ -92,12 +91,20 @@ class TextTool extends P5BaseTool<TextToolAnnotation> {
             annotation.textWidth = textWidth
             const textHeight = sk.textAscent()
             annotation.textHeight = textHeight
-
+            
+            sk.push()
+            const offsetX = this.manager.hflip ? 0 : -textWidth / 2
+            const offsetY = this.manager.vflip ? -annotation.options.textSize!/3 : 0
+            this.resetTextTransform(sk, [
+                annotation.startPoint![0] + offsetX,
+                annotation.startPoint![1] + offsetY
+            ])
             sk.text(
                 text,
-                startPoint[0] - textWidth / 2,
-                startPoint[1]
+                startPoint[0] + offsetX,
+                startPoint[1] + offsetY
             )
+            sk.pop()
         }
     }
 }

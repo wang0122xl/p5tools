@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-03 11:03:30
+ * @LastEditTime: 2022-11-10 13:46:59
  * @Description: 角度
  */
 
@@ -111,16 +111,28 @@ class AngleTool extends P5BaseTool<AngleToolAnnotation> {
             }
 
             if (transformed1 && transformed2 && transformed3 && this.showAngle) {
+                const angle = calculateAngle(transformed1, transformed2, transformed3)
+                const text = angle + '°'
                 sk.textSize((anno.options.textSize || 14) * this.manager.scale)
                 sk.fill(anno.options.strokeColor!)
-                const angle = calculateAngle(transformed1, transformed2, transformed3)
-                const offset = (transformed1[0] > transformed2[0] ? -30 : 10) * this.manager.scale
+                const textWidth = sk.textWidth(text)
+                const textHeight = sk.textAscent()
+                const textSize = anno.options.textSize || 15
+                
                 if (this.showAngle) {
+                    sk.push()
+                    const offsetX = this.manager.hflip ? -5 : -textWidth - 5
+                    const offsetY = this.manager.vflip ? 0 : textHeight / 3
+                    this.resetTextTransform(sk, [
+                        point2![0] + offsetX,
+                        point2![1] + offsetY
+                    ])
                     sk.text(
-                        angle + '°',
-                        transformed2[0] + offset,
-                        transformed2[1] + (anno.options.textSize || 15) * this.manager.scale / 3
+                        text,
+                        transformed2[0] + (this.manager.hflip ? -5 : ( -textWidth - 5)),
+                        transformed2[1] + offsetY
                     )
+                    sk.pop()
                 }
             }
         }
