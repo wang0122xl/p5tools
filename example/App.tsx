@@ -2,7 +2,7 @@
  * @Date: 2022-02-28 15:12:47
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-03-10 22:48:28
+ * @LastEditTime: 2022-12-08 13:36:59
  * @Description: file content
  */
 import { useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react'
@@ -70,9 +70,9 @@ function App() {
             .useTool(freehandTool, getInfo)
             .useTool(arrowLineTool, getInfo)
             .useTool(cropTool, getInfo)
-        toolsManager
-            .usePlugin(new P5ToolsManager.MovePlugin(), [circleTool, squareTool, textTool])
-            .usePlugin(new P5ToolsManager.ScalePlugin(), [squareTool, circleTool])
+        // toolsManager
+        //     .usePlugin(new P5ToolsManager.MovePlugin(), [circleTool, squareTool, textTool])
+        //     .usePlugin(new P5ToolsManager.ScalePlugin(), [squareTool, circleTool])
         return toolsManager
     })
 

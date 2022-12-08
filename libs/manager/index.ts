@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 17:10:02
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-11-10 10:47:42
+ * @LastEditTime: 2022-12-08 13:36:12
  * @Description: file content
  */
 
@@ -33,7 +33,7 @@ import ScaleTool from '../tools/scaleTool'
 type SKTouchStatus = 'start' | 'moving' | 'end'
 
 class P5ToolsManager {
-    private tools: P5BaseTool<any>[] = []
+    public tools: P5BaseTool<any>[] = []
     private plugins: P5BasePlugin[] = []
     /** mapping结构的tools，方便取值 */
     private _toolsMapping: Record<string, P5BaseTool<any>> = {}
