@@ -2,7 +2,7 @@
  * @Date: 2022-02-24 15:58:06
  * @Author: wang0122xl@163.com
  * @LastEditors: wang0122xl@163.com
- * @LastEditTime: 2022-12-08 16:08:30
+ * @LastEditTime: 2022-12-08 16:22:55
  * @Description: 基础工具
  */
 
@@ -286,7 +286,6 @@ class P5BaseTool<
      * @return {*}
      */    
     public touchMoved(sk: P5) {
-        console.log('move')
         if (!this.editingAnnotation) {
             // this.touchEnded(sk)
         } else {
